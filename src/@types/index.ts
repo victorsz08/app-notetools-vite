@@ -3,11 +3,12 @@
 
 
 export type UserData = {
-    id: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  avatarUrl: string;
+  createdAt: string;
+  updatedAt: string;
 };

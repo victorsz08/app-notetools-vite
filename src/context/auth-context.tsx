@@ -1,10 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { UserData } from "../@types";
-import { useQuery } from "@tanstack/react-query";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "../pages/loading";
-import { destroyCookie, parseCookies } from "nookies";
+import { parseCookies } from "nookies";
 
 export type AuthContextProps = {
   user?: UserData;
@@ -29,11 +28,13 @@ export function AuthContextProvider({
   const cookie = parseCookies(null);
   const token = cookie["nt.authtoken"];
 
+
   useEffect(() => {
     const getSession = async () => {
       try {
         const response = await api.get("/auth/session");
         const user = await api.get<UserData>(`users/${response.data.id}`);
+        console.log(user)
         setUser(user.data);
         setIsLoading(false);
       } catch (error) {
