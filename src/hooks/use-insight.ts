@@ -8,12 +8,20 @@ interface InsightsData {
   completionRate: number;
 }
 
+interface InsightsStatus {
+  connected: number;
+  pending: number;
+  cancelled: number;
+}
+
 interface UseInsightProps {
   getInsight: () => Promise<InsightsData>;
+  getInsightStatus: () => Promise<InsightsStatus>;
 }
 
 const dateIn = moment().startOf("month").format("YYYY-MM-DD");
 const dateOut = moment().endOf("month").format("YYYY-MM-DD");
+
 export function useInsight(userId?: string): UseInsightProps {
   const getInsight = async () => {
     const response = await api.get<InsightsData>(
@@ -22,7 +30,16 @@ export function useInsight(userId?: string): UseInsightProps {
     return response.data;
   };
 
+  const getInsightStatus = async () => {
+    const response = await api.get<InsightsStatus>(
+      `insights/status/${userId}?dateIn=${dateIn}&dateOut=${dateOut}`
+    );
+    console.log(response.data);
+    return response.data;
+  };
+
   return {
     getInsight,
+    getInsightStatus,
   };
 }
