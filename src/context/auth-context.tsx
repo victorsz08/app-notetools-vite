@@ -28,13 +28,11 @@ export function AuthContextProvider({
   const cookie = parseCookies(null);
   const token = cookie["nt.authtoken"];
 
-
   useEffect(() => {
     const getSession = async () => {
       try {
         const response = await api.get("/auth/session");
         const user = await api.get<UserData>(`users/${response.data.id}`);
-        console.log(user)
         setUser(user.data);
         setIsLoading(false);
       } catch (error) {
@@ -51,7 +49,7 @@ export function AuthContextProvider({
       setIsLoading(false);
       setError(true); // se não tem token, também é erro de auth
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (!isLoading && error) {
