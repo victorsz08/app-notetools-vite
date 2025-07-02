@@ -1,4 +1,3 @@
-import { useAuth } from "@/context/auth-context";
 import api from "@/lib/api";
 import moment from "moment";
 
@@ -8,7 +7,7 @@ interface InsightsData {
   completionRate: number;
 }
 
-interface InsightsStatus {
+export interface InsightStatus {
   connected: number;
   pending: number;
   cancelled: number;
@@ -16,7 +15,7 @@ interface InsightsStatus {
 
 interface UseInsightProps {
   getInsight: () => Promise<InsightsData>;
-  getInsightStatus: () => Promise<InsightsStatus>;
+  getInsightStatus: () => Promise<InsightStatus>;
 }
 
 const dateIn = moment().startOf("month").format("YYYY-MM-DD");
@@ -31,7 +30,7 @@ export function useInsight(userId?: string): UseInsightProps {
   };
 
   const getInsightStatus = async () => {
-    const response = await api.get<InsightsStatus>(
+    const response = await api.get<InsightStatus>(
       `insights/status/${userId}?dateIn=${dateIn}&dateOut=${dateOut}`
     );
     console.log(response.data);

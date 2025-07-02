@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react";
+import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 
 import {
@@ -15,80 +18,89 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useAuth } from "@/context/auth-context";
-import { useQuery } from "@tanstack/react-query";
-import { useInsight } from "@/hooks/use-insight";
 import moment from "moment";
+import { useAuth } from "@/context/auth-context";
+import { useInsight, type InsightStatus } from "@/hooks/use-insight";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "../ui/skeleton";
+import api from "@/lib/api";
+
+interface ChartDataProps {
+  status: string;
+  quantidade: number;
+  fill: string;
+}
 
 const chartConfig = {
   vendas: {
     label: "Vendas",
   },
-  conectado: {
+  conectados: {
     label: "Conectados",
-    color: "var(--chart-1)",
+    color: "var(--chart-3)",
   },
-  pendente: {
+  pendentes: {
     label: "Pendentes",
     color: "var(--chart-2)",
   },
-  cancelado: {
+  cancelados: {
     label: "Cancelados",
-    color: "var(--chart-2)",
+    color: "var(--chart-4)",
   },
-} satisfies ChartConfig;
+} as ChartConfig;
 
-interface InsightsStatus {
-  connected: number;
-  pending: number;
-  cancelled: number;
-}
+const dateIn = moment().startOf("month").format("YYYY-MM-DD");
+const dateOut = moment().endOf("month").format("YYYY-MM-DD");
 
-export function DonutChart() {
+export function ChartPieDonut() {
   const { user } = useAuth();
   const userId = user?.id;
 
-  const { getInsightStatus } = useInsight(userId);
-
-  const { data, isPending } = useQuery<InsightsStatus>({
-    queryKey: ["charts"],
-    queryFn: getInsightStatus,
+  const { data, isPending } = useQuery({
+    queryFn: async () => {
+      const response = await api.get<InsightStatus>(
+        `insights/status/${userId}?dateIn=${dateIn}&dateOut=${dateOut}`
+      );
+      console.log(response);
+      return response.data;
+    },
+    queryKey: ["insights-status", userId],
     enabled: !!userId,
+    initialData: {} as InsightStatus,
   });
 
-  const chartData = [
+  const chartData: ChartDataProps[] = [
     {
-      status: "conectado",
-      quantity: data?.connected || 0,
-      fill: "var(--color-conectado)",
+      status: "conectados",
+      quantidade: data.connected,
+      fill: "var(--color-conectados)",
     },
     {
-      status: "pendente",
-      quantity: data?.pending || 0,
-      fill: "var(--color-pendente)",
+      status: "pendentes",
+      quantidade: data.pending,
+      fill: "var(--color-pendentes)",
     },
     {
-      status: "cancelado",
-      quantity: data?.cancelled || 0,
-      fill: "var(--color-cancelado)",
+      status: "cancelados",
+      quantidade: data.cancelled,
+      fill: "var(--color-cancelados)",
     },
   ];
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.quantity, 0);
-  }, [data, isPending]);
 
-  console.log(totalVisitors);
+  const totalSales = React.useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.quantidade, 0);
+  }, []);
 
-  if (isPending) return <p>Carregando...</p>;
+  if (isPending) {
+    return <Skeleton className="w-[220px] h-[240px] bg-muted" />;
+  }
 
   return (
-    <Card className="flex flex-col max-w-[320px]">
-      <CardHeader className="items-center text-center pb-0">
-        <CardTitle>Status de Pedidos</CardTitle>
-        <CardDescription>
-          {moment().startOf("month").format("MMM DD")}
-          {" - "}
-          {moment().endOf("month").format("MMM DD")}
+    <Card className="flex text-center flex-col max-w-[320px]">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Status dos pedidos</CardTitle>
+        <CardDescription className="text-xs">
+          Mostrandos vendas efetuadas no mês
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -103,7 +115,7 @@ export function DonutChart() {
             />
             <Pie
               data={chartData}
-              dataKey="quantity"
+              dataKey="quantidade"
               nameKey="status"
               innerRadius={60}
               strokeWidth={5}
@@ -121,9 +133,9 @@ export function DonutChart() {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-black text-3xl font-bold"
+                          className="fill-foreground text-foreground text-3xl font-bold"
                         >
-                          {totalVisitors}
+                          {totalSales}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
@@ -141,7 +153,26 @@ export function DonutChart() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
+      <CardFooter className="flex-col gap-2 text-center">
+        <div className="flex items-center justify-center space-x-3">
+          {chartData.map((item, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="flex items-center gap-1">
+                <span
+                  style={{ backgroundColor: chartConfig[item.status].color }}
+                  className="w-3 h-3 rounded-sm"
+                ></span>
+                <span className="text-foreground font-semibold text-sm">
+                  {item.quantidade}
+                </span>
+              </div>
+              <span className="text-xs font-light text-muted-foreground/80">
+                {item.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </CardFooter>
     </Card>
   );
 }

@@ -1,4 +1,4 @@
-import { DonutChart } from "@/components/charts/donut-chart";
+import { ChartPieDonut } from "@/components/charts/donut-chart";
 import { Insights } from "@/components/insights/insights";
 
 export function Dahsboard() {
@@ -14,7 +14,7 @@ export function Dahsboard() {
       </div>
       <Insights />
       <section>
-        <DonutChart />
+        <ChartPieDonut />
       </section>
     </section>
   );
