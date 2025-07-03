@@ -1,6 +1,7 @@
 import { BarChartSales } from "@/components/charts/bar-chart";
 import { ChartPieDonut } from "@/components/charts/donut-chart";
 import { Insights } from "@/components/insights/insights";
+import { NextOrders } from "@/components/table/next-orders";
 
 export function Dahsboard() {
   return (
@@ -18,6 +19,7 @@ export function Dahsboard() {
         <ChartPieDonut />
         <BarChartSales />
       </section>
+      <NextOrders />
     </section>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Pie, PieChart } from "recharts";
+import { Label, Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -72,8 +72,8 @@ export function ChartPieDonut() {
   ];
 
   const totalSales = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.quantidade, 0);
-  }, [data, isPending]);
+    return chartData.reduce((acc, item) => acc + item.quantidade, 0);
+  }, [data]);
 
   if (isPending) {
     return <Skeleton className="w-[220px] h-[240px] bg-muted" />;
@@ -103,17 +103,13 @@ export function ChartPieDonut() {
               nameKey="status"
               innerRadius={60}
               strokeWidth={5}
-            ></Pie>
+            >
+              <Label className="text-3xl font-bold text-muted-foreground">
+                {totalSales.toLocaleString()}
+              </Label>
+            </Pie>
           </PieChart>
         </ChartContainer>
-        <div className="absolute translate-x-[6.8rem] -translate-y-[9.2rem] -space-y-1 flex flex-col items-center">
-          <span className="text-3xl font-bold font-inter text-muted-foreground">
-            {totalSales.toLocaleString()}
-          </span>
-          <span className="text-xs font-light text-muted-foreground/70">
-            Vendas
-          </span>
-        </div>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-center">
         <div className="flex items-center justify-center space-x-3">
