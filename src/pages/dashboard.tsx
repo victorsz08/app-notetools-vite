@@ -1,3 +1,4 @@
+import { BarChartSales } from "@/components/charts/bar-chart";
 import { ChartPieDonut } from "@/components/charts/donut-chart";
 import { Insights } from "@/components/insights/insights";
 
@@ -13,8 +14,9 @@ export function Dahsboard() {
         </small>
       </div>
       <Insights />
-      <section>
+      <section className="flex space-x-4 w-full">
         <ChartPieDonut />
+        <BarChartSales />
       </section>
     </section>
   );

@@ -1,42 +1,70 @@
-import axios from "axios";
-import { parseCookies, destroyCookie } from "nookies";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import { destroyCookie } from "nookies";
 
-const BASE_URL = "https://api-notetools.onrender.com/";
+const BASE_URL = "http://localhost:8000/";
 
 const api = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
 });
 
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}[] = [];
 
-api.interceptors.request.use(
-    (config) => {
-        const cookie = parseCookies(null);
-        const token = cookie["nt.authtoken"];
-
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+const processQueue = (
+  error: AxiosError | null,
+  token: string | null = null
+) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
     }
-);
+  });
+  failedQueue = [];
+};
 
 api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        if (error.response.status === 401) {
-            destroyCookie(null, "nt.authtoken");
-            window.location.href = "/login";
-        }
-        return Promise.reject(error);
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => api(originalRequest));
+      }
+
+      isRefreshing = true;
+
+      try {
+        await api.post("/auth/refresh");
+        processQueue(null);
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError as AxiosError, null);
+        destroyCookie(null, "nt.authtoken");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    return Promise.reject(error);
+  }
 );
 
 export default api;

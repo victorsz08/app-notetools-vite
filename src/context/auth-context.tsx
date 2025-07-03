@@ -1,12 +1,12 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import type { UserData } from "../@types";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "../pages/loading";
-import { parseCookies } from "nookies";
+import { useQuery } from "@tanstack/react-query";
 
 export type AuthContextProps = {
-  user?: UserData;
+  user?: UserData | null;
   isAuthenticated?: boolean;
   isLoading?: boolean;
 };
@@ -21,43 +21,36 @@ export function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const router = useNavigate();
-  const [user, setUser] = useState<UserData>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
-  const isAuthenticated = !!user;
-  const cookie = parseCookies(null);
-  const token = cookie["nt.authtoken"];
-
-  useEffect(() => {
-    const getSession = async () => {
-      try {
-        const response = await api.get("/auth/session");
-        const user = await api.get<UserData>(`users/${response.data.id}`);
-        setUser(user.data);
-        setIsLoading(false);
-      } catch (error) {
-        setError(true);
-        setIsLoading(false);
-      } finally {
-        setIsLoading(false);
+  const {
+    data: user,
+    isLoading,
+    isFetching,
+    error,
+  } = useQuery({
+    queryFn: async () => {
+      const response = await api.get("auth/session");
+      if (response.status === 401) {
+        router("/login");
+        return null;
       }
-    };
+      const responseSession = await api.get<UserData>(
+        `users/${response.data.id}`
+      );
+      return responseSession.data;
+    },
+    queryKey: ["session"],
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 10, //  10 minutes
+  });
 
-    if (token) {
-      getSession();
-    } else {
-      setIsLoading(false);
-      setError(true); // se não tem token, também é erro de auth
-    }
-  }, []);
+  console.log(user);
+  const isAuthenticated = !!user;
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      router("/login");
-    }
-  }, [error, isLoading, router]);
+  if (error) {
+    router("/login");
+  }
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <Loading />;
   }
 
@@ -69,7 +62,7 @@ export function AuthContextProvider({
 }
 
 export interface AuthContextType {
-  user?: UserData;
+  user?: UserData | null;
   isAuthenticated?: boolean;
   isLoading?: boolean;
 }

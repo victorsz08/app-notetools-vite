@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart } from "recharts";
+import { Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -18,12 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import moment from "moment";
-import { useAuth } from "@/context/auth-context";
 import { useInsight, type InsightStatus } from "@/hooks/use-insight";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../ui/skeleton";
-import api from "@/lib/api";
 
 interface ChartDataProps {
   status: string;
@@ -37,7 +33,7 @@ const chartConfig = {
   },
   conectados: {
     label: "Conectados",
-    color: "var(--chart-3)",
+    color: "var(--chart-1)",
   },
   pendentes: {
     label: "Pendentes",
@@ -45,27 +41,15 @@ const chartConfig = {
   },
   cancelados: {
     label: "Cancelados",
-    color: "var(--chart-4)",
+    color: "var(--chart-3)",
   },
 } as ChartConfig;
 
-const dateIn = moment().startOf("month").format("YYYY-MM-DD");
-const dateOut = moment().endOf("month").format("YYYY-MM-DD");
-
 export function ChartPieDonut() {
-  const { user } = useAuth();
-  const userId = user?.id;
-
+  const { getInsightStatus } = useInsight();
   const { data, isPending } = useQuery({
-    queryFn: async () => {
-      const response = await api.get<InsightStatus>(
-        `insights/status/${userId}?dateIn=${dateIn}&dateOut=${dateOut}`
-      );
-      console.log(response);
-      return response.data;
-    },
-    queryKey: ["insights-status", userId],
-    enabled: !!userId,
+    queryFn: getInsightStatus,
+    queryKey: ["insights-status"],
     initialData: {} as InsightStatus,
   });
 
@@ -89,14 +73,14 @@ export function ChartPieDonut() {
 
   const totalSales = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.quantidade, 0);
-  }, []);
+  }, [data, isPending]);
 
   if (isPending) {
     return <Skeleton className="w-[220px] h-[240px] bg-muted" />;
   }
 
   return (
-    <Card className="flex text-center flex-col max-w-[320px]">
+    <Card className="flex text-center flex-col w-[420px]">
       <CardHeader className="items-center pb-0">
         <CardTitle>Status dos pedidos</CardTitle>
         <CardDescription className="text-xs">
@@ -106,7 +90,7 @@ export function ChartPieDonut() {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto relative aspect-square max-h-[250px]"
         >
           <PieChart>
             <ChartTooltip
@@ -119,39 +103,17 @@ export function ChartPieDonut() {
               nameKey="status"
               innerRadius={60}
               strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-foreground text-3xl font-bold"
-                        >
-                          {totalSales}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Vendas
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
+            ></Pie>
           </PieChart>
         </ChartContainer>
+        <div className="absolute translate-x-[6.8rem] -translate-y-[9.2rem] -space-y-1 flex flex-col items-center">
+          <span className="text-3xl font-bold font-inter text-muted-foreground">
+            {totalSales.toLocaleString()}
+          </span>
+          <span className="text-xs font-light text-muted-foreground/70">
+            Vendas
+          </span>
+        </div>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-center">
         <div className="flex items-center justify-center space-x-3">
@@ -162,7 +124,7 @@ export function ChartPieDonut() {
                   style={{ backgroundColor: chartConfig[item.status].color }}
                   className="w-3 h-3 rounded-sm"
                 ></span>
-                <span className="text-foreground font-semibold text-sm">
+                <span className="text-foreground font-inter font-semibold text-sm">
                   {item.quantidade}
                 </span>
               </div>

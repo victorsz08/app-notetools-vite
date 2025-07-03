@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setCookie } from "nookies";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -36,12 +35,7 @@ export function LoginPage() {
   async function onSubmit(data: LoginDataType) {
     try {
       setIsLoading(true);
-      const response = await api.post("auth/login", data);
-      const { token } = response.data;
-      setCookie(null, "nt.authtoken", token, {
-        maxAge: 60 * 60 * 24, // 1 day
-        path: "/",
-      });
+      await api.post("auth/login", data);
 
       router("/");
       return;
