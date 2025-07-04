@@ -1,7 +1,7 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { destroyCookie } from "nookies";
 
-const BASE_URL = "http://localhost:8000/";
+const BASE_URL = "https://api-notetools.onrender.com/";
 
 const api = axios.create({
   baseURL: BASE_URL,

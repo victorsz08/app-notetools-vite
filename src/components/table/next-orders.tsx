@@ -4,12 +4,14 @@ import { useOrder } from "@/hooks/user-order";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../ui/skeleton";
 import { File } from "lucide-react";
+import { CreateOrderForm } from "../forms/create-order-form";
 
 export function NextOrders() {
   const { getNextOrders } = useOrder();
   const { data, isFetching } = useQuery({
     queryKey: ["next-orders"],
     queryFn: getNextOrders,
+    refetchOnWindowFocus: false,
   });
 
   if (isFetching) return <Skeleton className="bg-muted w-full h-42" />;
@@ -33,6 +35,7 @@ export function NextOrders() {
                 Nenhum pedido com agendamento para hoje.
               </small>
             </div>
+            <CreateOrderForm />
           </div>
         )}
       </CardContent>

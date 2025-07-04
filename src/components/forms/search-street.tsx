@@ -41,27 +41,30 @@ export function SearchStreet() {
   });
 
   const formatCep = (value: string) => {
-    const numbers = value.replace(/\D/g, "")
+    const numbers = value.replace(/\D/g, "");
     if (numbers.length <= 8) {
-      return numbers.replace(/(\d{5})(\d{3})/, "$1-$2")
+      return numbers.replace(/(\d{5})(\d{3})/, "$1-$2");
     }
-    return numbers.slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2")
-  }
+    return numbers.slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
+  };
   async function onSubmit(values: SearchStreetForm) {
     setIsLoading(true);
-    const response = await fetch(
-      `https://brasilapi.com.br/api/cep/v2/${values.cep}`
-    );
-    const data = await response.json();
+    setAddress(null);
 
-    if (data.status === 404) {
-      form.setError("cep", {
-        message: "CEP não encontrado",
-      });
-      setIsLoading(false);
-    } else {
+    try {
+      const cepFormatted =
+        values.cep.length === 7 ? `0${values.cep}` : values.cep;
+      const response = await fetch(
+        `https://brasilapi.com.br/api/cep/v2/${cepFormatted}`
+      );
+      const data = await response.json();
       setAddress(data);
       form.reset();
+    } catch (error) {
+      form.setError("cep", {
+        message: "Cep incorreto",
+      });
+    } finally {
       setIsLoading(false);
     }
   }
