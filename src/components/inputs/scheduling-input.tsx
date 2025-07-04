@@ -1,13 +1,13 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import moment from "moment";
 import { Calendar } from "../ui/calendar";
 import { ptBR } from "date-fns/locale";
+import { format } from "date-fns";
 
 export interface SchedulingValue {
-  date?: Date;
-  time?: string;
+  date: Date;
+  time: string;
 }
 
 interface TimeOptions {
@@ -15,8 +15,8 @@ interface TimeOptions {
 }
 
 interface SchedulingInputProps {
-  value?: SchedulingValue;
-  onChange: (value?: SchedulingValue) => void;
+  value: SchedulingValue;
+  onChange: (value: SchedulingValue) => void;
 }
 
 const timeOptions: TimeOptions[] = [
@@ -31,7 +31,7 @@ export function SchedulingInput({ value, onChange }: SchedulingInputProps) {
   function handleDateChange(date?: Date) {
     if (date) {
       onChange({
-        time: value?.time,
+        time: value.time,
         date,
       });
     }
@@ -52,20 +52,22 @@ export function SchedulingInput({ value, onChange }: SchedulingInputProps) {
         <Button
           variant="outline"
           type="button"
-          className="flex items-center font-normal text-muted-foreground justify-start gap-2"
+          className="flex bg-card h-12 hover:bg-card items-center font-normal text-muted-foreground justify-start gap-2"
         >
           <CalendarIcon className="w-4 h-4" />
           {value && (
             <>
               {value.date && (
-                <span>{moment(value.date).format("DD/MM/YYYY")}</span>
+                <span>
+                  {format(value.date, "dd MMM yyyy", { locale: ptBR })}
+                </span>
               )}
               {value.time && <span>{value.time}</span>}
             </>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full flex items-start gap-4">
+      <PopoverContent className="w-full flex items-center gap-4">
         <Calendar
           mode="single"
           locale={ptBR}
