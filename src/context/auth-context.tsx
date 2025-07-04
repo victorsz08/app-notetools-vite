@@ -9,6 +9,7 @@ export type AuthContextProps = {
   user?: UserData | null;
   isAuthenticated?: boolean;
   isLoading?: boolean;
+  isFetching?: boolean;
 };
 
 export const AuthContext = createContext<AuthContextProps>(
@@ -43,19 +44,20 @@ export function AuthContextProvider({
     staleTime: 1000 * 60 * 10, //  10 minutes
   });
 
-  console.log(user);
   const isAuthenticated = !!user;
 
   if (error) {
     router("/login");
   }
 
-  if (isLoading || isFetching) {
+  if ((isLoading && !isAuthenticated) || (isFetching && !isAuthenticated)) {
     return <Loading />;
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, isFetching }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -65,6 +67,7 @@ export interface AuthContextType {
   user?: UserData | null;
   isAuthenticated?: boolean;
   isLoading?: boolean;
+  isFetching?: boolean;
 }
 
 export function useAuth(): AuthContextType {

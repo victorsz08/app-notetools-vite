@@ -1,14 +1,15 @@
 import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/context/auth-context";
 import { Dahsboard } from "@/pages/dashboard";
+import { Loading } from "@/pages/loading";
 import { LoginPage } from "@/pages/LoginPage";
 import { Route, Routes, Navigate } from "react-router-dom";
 
 export function RootRoutes() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isFetching } = useAuth();
 
-  if (isLoading) {
-    return null;
+  if ((isLoading && !isAuthenticated) || (isFetching && !isAuthenticated)) {
+    return <Loading />;
   }
 
   return (
