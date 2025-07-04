@@ -1,16 +1,22 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { UserData } from "../@types";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "../pages/loading";
-import { useQuery } from "@tanstack/react-query";
+import { destroyCookie } from "nookies";
 
 export type AuthContextProps = {
   user?: UserData | null;
   isAuthenticated?: boolean;
   isLoading?: boolean;
-  isFetching?: boolean;
+  logout: () => void;
+  login: (credentials: LoginCredentials) => Promise<void>;
 };
+
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
 
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
@@ -22,55 +28,66 @@ export function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const router = useNavigate();
-  const {
-    data: user,
-    isLoading,
-    isFetching,
-    error,
-  } = useQuery({
-    queryFn: async () => {
-      const response = await api.get("auth/session");
-      if (response.status === 401) {
-        router("/login");
-        return null;
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const fetchAndSetUser = async () => {
+    const response = await api.get("auth/session");
+    const { data } = await api.get<UserData>(`users/${response.data.id}`);
+    setUser(data);
+  };
+
+  useEffect(() => {
+    const getSession = async () => {
+      try {
+        await fetchAndSetUser();
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-      const responseSession = await api.get<UserData>(
-        `users/${response.data.id}`
-      );
-      return responseSession.data;
-    },
-    queryKey: ["session"],
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 10, //  10 minutes
-  });
+    };
 
-  const isAuthenticated = !!user;
+    getSession();
+  }, []);
 
-  if (error) {
-    router("/login");
-  }
+  const login = async (credentials: LoginCredentials) => {
+    try {
+      await api.post("auth/login", credentials);
+      await fetchAndSetUser();
+      router("/");
+    } catch (error) {
+      throw error;
+    }
+  };
 
-  if ((isLoading && !isAuthenticated) || (isFetching && !isAuthenticated)) {
+  const logout = async () => {
+    try {
+      await api.post("auth/logout");
+    } catch (error) {
+      console.error("Falha ao fazer logout no backend:", error);
+    } finally {
+      destroyCookie(null, "nt.authtoken");
+      setUser(null);
+      router("/login");
+    }
+  };
+  if (isLoading) {
     return <Loading />;
   }
 
+  const isAuthenticated: boolean = !!user;
+
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, isFetching }}
+      value={{ user, isAuthenticated, isLoading, logout, login }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export interface AuthContextType {
-  user?: UserData | null;
-  isAuthenticated?: boolean;
-  isLoading?: boolean;
-  isFetching?: boolean;
-}
-
-export function useAuth(): AuthContextType {
+export function useAuth() {
   const context = useContext(AuthContext);
   return context;
 }

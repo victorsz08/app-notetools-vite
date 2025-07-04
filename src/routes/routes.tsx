@@ -1,21 +1,30 @@
 import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/context/auth-context";
 import { Dahsboard } from "@/pages/dashboard";
-import { Loading } from "@/pages/loading";
 import { LoginPage } from "@/pages/LoginPage";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, Outlet } from "react-router-dom";
+
+const PrivateRoutes = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return null;
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
 
 export function RootRoutes() {
-  const { isAuthenticated, isLoading, isFetching } = useAuth();
-
-  if ((isLoading && !isAuthenticated) || (isFetching && !isAuthenticated)) {
-    return <Loading />;
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Dahsboard />} />
+      <Route element={<PrivateRoutes />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dahsboard />} />
+        </Route>
       </Route>
       <Route
         path="/login"

@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
 import {
   Form,
   FormField,
@@ -11,9 +10,9 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { Button } from "@/components/ui/button";
-import api from "@/lib/api";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 const loginSchema = z.object({
   username: z.string().nonempty("Campo obrigatório"),
   password: z.string().nonempty("Campo obrigatório"),
@@ -22,7 +21,7 @@ const loginSchema = z.object({
 type LoginDataType = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
-  const router = useNavigate();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<LoginDataType>({
     resolver: zodResolver(loginSchema),
@@ -35,10 +34,7 @@ export function LoginPage() {
   async function onSubmit(data: LoginDataType) {
     try {
       setIsLoading(true);
-      await api.post("auth/login", data);
-
-      router("/");
-      return;
+      await login(data);
     } catch (error: any) {
       if (error.response.status === 400) {
         form.setError("username", {
@@ -50,7 +46,6 @@ export function LoginPage() {
           message: "Usuário ou senha inválidos",
         });
       }
-      return;
     } finally {
       setIsLoading(false);
     }

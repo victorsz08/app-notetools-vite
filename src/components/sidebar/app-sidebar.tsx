@@ -66,10 +66,16 @@ const links = [
   },
 ];
 
+const userRole = {
+  User: "Usuário",
+  Admin: "Administrador",
+} as const;
+
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
   return (
     <Sidebar {...props} className="border-">
       <SidebarHeader className="py-6">
@@ -116,8 +122,8 @@ export default function AppSidebar({
                     <span className="truncate font-normal">
                       {user?.firstName} {user?.lastName}
                     </span>
-                    <span className="truncate text-xs text-foreground/60">
-                      @{user?.username}
+                    <span className="truncate text-xs text-foreground/40">
+                      {userRole[user?.role as keyof typeof userRole]}
                     </span>
                   </div>
                 </SidebarMenuButton>
@@ -133,12 +139,15 @@ export default function AppSidebar({
                     href="/perfil"
                     className="cursor-pointer flex items-center gap-1 w-full"
                   >
-                    <User className="mr-2 h-4 w-4" />
+                    <User className="mr-1 h-4 w-4" />
                     Perfil
                   </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-red-600">
-                  <LogOut className="mr-2 h-4 w-4 text-red-600" />
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="cursor-pointer text-red-600"
+                >
+                  <LogOut className="mr-1 h-4 w-4 text-red-600" />
                   Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>

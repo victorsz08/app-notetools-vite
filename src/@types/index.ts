@@ -1,9 +1,11 @@
+type Role = "ADMIN" | "USER";
+
 export type UserData = {
   id: string;
   username: string;
   firstName: string;
   lastName: string;
-  role: string;
+  role: Role;
   avatarUrl: string;
   createdAt: string;
   updatedAt: string;
