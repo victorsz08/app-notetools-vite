@@ -1,4 +1,4 @@
-import type { DataOrder } from "@/@types";
+import type { DataOrder, Status } from "@/@types";
 import api from "@/lib/api";
 import moment from "moment";
 
@@ -10,8 +10,17 @@ interface GetOrdersOutput {
   limit: number;
 }
 
+export interface GetOrdersInputDto {
+  page: number;
+  limit: number;
+  schedulingDateIn?: string;
+  schedulingDateOut?: string;
+  createdDateIn?: string;
+  createdDateOut?: string;
+  status?: Status;
+}
 interface UseOrderProps {
-  getOrders: () => Promise<GetOrdersOutput>;
+  getOrders: (input: GetOrdersInputDto) => Promise<GetOrdersOutput>;
   getNextOrders: () => Promise<GetOrdersOutput>;
 }
 
@@ -27,14 +36,39 @@ export function useOrder(): UseOrderProps {
     return response.data;
   };
 
-  const getOrders = async () => {
-    const response = await api.get<GetOrdersOutput>(
-      `orders/list?page=1&limit=100&schedulingDateIn=${dateIn}&schedulingDateOut=${dateOut}`
-    );
+  const getOrders = async (input: GetOrdersInputDto) => {
+    const {
+      page,
+      limit,
+      schedulingDateIn,
+      schedulingDateOut,
+      createdDateIn,
+      createdDateOut,
+      status,
+    } = input;
 
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    if (status) {
+      params.append("status", status);
+    }
+
+    if (schedulingDateIn && schedulingDateOut) {
+      params.append("schedulingDateIn", schedulingDateIn);
+      params.append("schedulingDateOut", schedulingDateOut);
+    }
+
+    if (createdDateIn && createdDateOut) {
+      params.append("createdDateIn", createdDateIn);
+      params.append("createdDateOut", createdDateOut);
+    }
+
+    const response = await api.get<GetOrdersOutput>(params.toString());
     return response.data;
   };
-
   return {
     getOrders,
     getNextOrders,

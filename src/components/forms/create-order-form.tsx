@@ -81,7 +81,7 @@ export function CreateOrderForm() {
   });
 
   function onSubmit(data: CreateOrderForm) {
-    console.log(formatPriceFloat(data.price));
+    mutate(data);
   }
 
   function formatPrice(value: string) {
@@ -226,7 +226,16 @@ export function CreateOrderForm() {
                         }
                       }}
                     />
-                    <FormMessage />
+                    {form.formState.errors.schedulingDate && (
+                      <FormMessage>
+                        {form.formState.errors.schedulingDate?.message}
+                      </FormMessage>
+                    )}
+                    {form.formState.errors.schedulingTime && (
+                      <FormMessage>
+                        {form.formState.errors.schedulingTime?.message}
+                      </FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
