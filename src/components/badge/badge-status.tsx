@@ -28,7 +28,9 @@ export function BadgeStatus({ variant }: BadgeStatus) {
   const label = Status[variant];
 
   return (
-    <div className={`${classes} flex items-center gap-1 justify-center`}>
+    <div
+      className={`${classes} py-1 w-[100px] rounded-sm  flex items-center gap-1 justify-center`}
+    >
       <span className="font-medium text-xs">{label}</span>
       <Icon className="w-3 h-3" />
     </div>

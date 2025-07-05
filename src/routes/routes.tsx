@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/context/auth-context";
 import { Dahsboard } from "@/pages/dashboard";
 import { LoginPage } from "@/pages/LoginPage";
+import { OrdersPage } from "@/pages/orders";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
@@ -24,6 +25,7 @@ export function RootRoutes() {
       <Route element={<PrivateRoutes />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dahsboard />} />
+          <Route path="/pedidos" element={<OrdersPage/>}/>
         </Route>
       </Route>
       <Route

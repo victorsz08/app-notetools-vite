@@ -6,7 +6,7 @@ import { NextOrders } from "@/components/table/next-orders";
 
 export function Dahsboard() {
   return (
-    <section className="w-full h-full p-4 space-y-6">
+    <section className="w-full h-fit p-4 space-y-6">
       <div className="flex flex-col">
         <h1 className="text-xl font-semibold text-muted-foreground">
           Dashboard

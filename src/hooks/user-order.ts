@@ -24,13 +24,13 @@ interface UseOrderProps {
   getNextOrders: () => Promise<GetOrdersOutput>;
 }
 
-const dateIn = moment().startOf("day").format("YYY-MM-DD");
-const dateOut = moment().endOf("day").format("YYY-MM-DD");
+const dateIn = moment().format("YYYY-MM-DD");
+const dateOut = moment().format("YYYY-MM-DD");
 
 export function useOrder(): UseOrderProps {
   const getNextOrders = async () => {
     const response = await api.get<GetOrdersOutput>(
-      `orders/list?page=1&limit=100&schedulingDateIn=${dateIn}&schedulingDateOut=${dateOut}`
+      `list-orders?page=1&limit=100&schedulingDateIn=${dateIn}&schedulingDateOut=${dateOut}`
     );
 
     return response.data;
@@ -66,7 +66,7 @@ export function useOrder(): UseOrderProps {
       params.append("createdDateOut", createdDateOut);
     }
 
-    const response = await api.get<GetOrdersOutput>(params.toString());
+    const response = await api.get<GetOrdersOutput>(`list-orders?${params.toString()}`);
     return response.data;
   };
   return {

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Contact, Loader, LoaderCircleIcon, Plus } from "lucide-react";
+import { LoaderCircleIcon, Plus } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { CidadeCombobox } from "../inputs/combobox";
@@ -102,7 +102,7 @@ export function CreateOrderForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button">
+        <Button type="button" className="w-fit">
           <Plus className="w-2 h-2" />
           <span className="pr-2">Novo pedido</span>
         </Button>

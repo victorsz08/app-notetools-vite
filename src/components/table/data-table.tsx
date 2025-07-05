@@ -1,4 +1,4 @@
-import type { DataOrder } from "@/@types";
+import type { DataOrder, Status } from "@/@types";
 import {
   Table,
   TableHead,
@@ -8,44 +8,103 @@ import {
   TableRow,
 } from "../ui/table";
 import { BadgeStatus } from "../badge/badge-status";
-import { currency } from "@/lib/utils";
-import { Ellipsis } from "lucide-react";
+import { currency, formatPhoneNumber } from "@/lib/utils";
+import { Ellipsis, Filter } from "lucide-react";
+import moment from "moment";
+import type { DateRange } from "react-day-picker";
+import { DateRangeFilter } from "../filters/date-range-filter";
+import { StatusFilter } from "../filters/status-filter";
 
+interface Filters {
+  schedulingDateFilter?: DateRange;
+  setSchedulingDateFilter?: (date?: DateRange) => void;
+  createdDateFilter?: DateRange;
+  setCreatedDateFilter?: (date?: DateRange) => void;
+  status?: Status;
+  setStatus?: (status?: Status) => void;
+}
 interface DataTableProps {
   data: DataOrder[];
+  filters?: Filters;
+  onFilters?: boolean;
 }
 
-export function DataTable({ data }: DataTableProps) {
+export function DataTable({ data, filters, onFilters }: DataTableProps) {
   return (
-    <section className="overflow-hidden rounded-sm">
+    <section className="overflow-hidden rounded-sm border border-muted-foreground/20">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="pl-5">
             <TableHead>N° do contrato</TableHead>
             <TableHead>Cidade</TableHead>
-            <TableHead>Data de agendamento</TableHead>
+            <TableHead>
+              {onFilters ? (
+                <DateRangeFilter
+                  date={filters?.schedulingDateFilter}
+                  onChange={filters?.setSchedulingDateFilter}
+                >
+                  <div className="cursor-pointer gap-1 justify-start flex items-center hover:text-primary">
+                    <span>Data de agendamento</span>
+                    <Filter className="w-3 h-3" />
+                  </div>
+                </DateRangeFilter>
+              ) : (
+                "Data de agendamento"
+              )}
+            </TableHead>
             <TableHead>Horário</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Contato</TableHead>
-            <TableHead>Criado</TableHead>
+            <TableHead>
+              {onFilters ? (
+                <DateRangeFilter
+                  date={filters?.createdDateFilter}
+                  onChange={filters?.setCreatedDateFilter}
+                >
+                  <div
+                    className={`cursor-pointer gap-1 justify-start flex 
+                  items-center hover:text-primary`}
+                  >
+                    <span>Criado</span>
+                    <Filter className="w-3 h-3" />
+                  </div>
+                </DateRangeFilter>
+              ) : (
+                "Criado"
+              )}
+            </TableHead>
+            <TableHead>
+              <StatusFilter status={filters?.status} onChange={filters?.setStatus}>
+                  <div
+                    className={`cursor-pointer gap-1 justify-start flex 
+                  items-center hover:text-primary`}
+                  >
+                    <span>Criado</span>
+                    <Filter className="w-3 h-3" />
+                  </div>
+                </StatusFilter>
+            </TableHead>
             <TableHead>Valor</TableHead>
-            <TableHead>Ações</TableHead>
+            <TableHead className="text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} className="px-4">
               <TableCell>{item.number}</TableCell>
               <TableCell>{item.local}</TableCell>
-              <TableCell>{item.schedulingDate}</TableCell>
+              <TableCell>
+                {moment(item.schedulingDate).format("DD/MM/YYYY")}
+              </TableCell>
               <TableCell>{item.schedulingTime}</TableCell>
+              <TableCell>{formatPhoneNumber(item.contact)}</TableCell>
+              <TableCell>
+                {moment(item.createdAt).format("DD/MM/YYYY")}
+              </TableCell>
               <TableCell>
                 <BadgeStatus variant={item.status} />
               </TableCell>
-              <TableCell>{item.contact}</TableCell>
-              <TableCell>{item.createdAt}</TableCell>
               <TableCell>{currency(item.price)}</TableCell>
-              <TableCell>
+              <TableCell className="flex justify-center items-center">
                 <Ellipsis />
               </TableCell>
             </TableRow>
