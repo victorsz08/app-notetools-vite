@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 import { SidebarProvider } from "../ui/sidebar"
 import AppSidebar from "../sidebar/app-sidebar"
 import { ToggleSidebar } from "../sidebar/toggle-sidebar";
+import { Toaster } from "sonner";
 
 
 
@@ -18,6 +19,7 @@ export function Layout() {
           </header>
           <Outlet />
         </main>
+        <Toaster richColors/>
       </SidebarProvider>
     );
 };

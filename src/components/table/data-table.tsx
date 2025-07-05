@@ -14,6 +14,7 @@ import moment from "moment";
 import type { DateRange } from "react-day-picker";
 import { DateRangeFilter } from "../filters/date-range-filter";
 import { StatusFilter } from "../filters/status-filter";
+import { CopyBadge } from "../badge/copy-badge";
 
 interface Filters {
   schedulingDateFilter?: DateRange;
@@ -73,15 +74,18 @@ export function DataTable({ data, filters, onFilters }: DataTableProps) {
               )}
             </TableHead>
             <TableHead>
-              <StatusFilter status={filters?.status} onChange={filters?.setStatus}>
-                  <div
-                    className={`cursor-pointer gap-1 justify-start flex 
+              <StatusFilter
+                status={filters?.status}
+                onChange={filters?.setStatus}
+              >
+                <div
+                  className={`cursor-pointer gap-1 justify-start flex 
                   items-center hover:text-primary`}
-                  >
-                    <span>Criado</span>
-                    <Filter className="w-3 h-3" />
-                  </div>
-                </StatusFilter>
+                >
+                  <span>Criado</span>
+                  <Filter className="w-3 h-3" />
+                </div>
+              </StatusFilter>
             </TableHead>
             <TableHead>Valor</TableHead>
             <TableHead className="text-center">Ações</TableHead>
@@ -90,13 +94,23 @@ export function DataTable({ data, filters, onFilters }: DataTableProps) {
         <TableBody>
           {data.map((item) => (
             <TableRow key={item.id} className="px-4">
-              <TableCell>{item.number}</TableCell>
+              <TableCell>
+                <div className="flex items-center justify-start gap-1">
+                  <CopyBadge value={item.number.toLocaleString()} />
+                  <span>{item.number}</span>
+                </div>
+              </TableCell>
               <TableCell>{item.local}</TableCell>
               <TableCell>
                 {moment(item.schedulingDate).format("DD/MM/YYYY")}
               </TableCell>
               <TableCell>{item.schedulingTime}</TableCell>
-              <TableCell>{formatPhoneNumber(item.contact)}</TableCell>
+              <TableCell>
+                <div className="flex items-center justify-start gap-1">
+                  <CopyBadge value={item.contact} />
+                  <span>{formatPhoneNumber(item.contact)}</span>
+                </div>
+              </TableCell>
               <TableCell>
                 {moment(item.createdAt).format("DD/MM/YYYY")}
               </TableCell>
