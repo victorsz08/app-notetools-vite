@@ -119,4 +119,11 @@
     @apply bg-background text-foreground;
     @apply font-poppins;
   }
+.ql-toolbar {
+  @apply bg-muted text-xs border-muted text-muted-foreground/80;
+}
+
+.ql-snow {
+  @apply bg-card text-xs border-muted;
+}
 }
