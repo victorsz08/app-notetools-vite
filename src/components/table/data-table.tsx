@@ -9,12 +9,14 @@ import {
 } from "../ui/table";
 import { BadgeStatus } from "../badge/badge-status";
 import { currency, formatPhoneNumber } from "@/lib/utils";
-import { Ellipsis, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import moment from "moment";
 import type { DateRange } from "react-day-picker";
 import { DateRangeFilter } from "../filters/date-range-filter";
 import { StatusFilter } from "../filters/status-filter";
 import { CopyBadge } from "../badge/copy-badge";
+import { Checkbox } from "../ui/checkbox";
+import { MenuOrder } from "../menu/menu-order";
 
 interface Filters {
   schedulingDateFilter?: DateRange;
@@ -28,14 +30,43 @@ interface DataTableProps {
   data: DataOrder[];
   filters?: Filters;
   onFilters?: boolean;
+  selectedItems?: string[];
+  onSelectedItemsChange?: (selectedItems: string[]) => void;
 }
 
-export function DataTable({ data, filters, onFilters }: DataTableProps) {
+export function DataTable({
+  data,
+  filters,
+  onFilters,
+  onSelectedItemsChange,
+  selectedItems,
+}: DataTableProps) {
+  function handleSelectAll(checked: boolean) {
+    if (checked) {
+      onSelectedItemsChange?.(data.map((item) => item.id));
+    } else {
+      onSelectedItemsChange?.([]);
+    }
+  }
+
+  function handleSelect(id: string) {
+    if (selectedItems?.includes(id)) {
+      onSelectedItemsChange?.(selectedItems.filter((item) => item !== id));
+    } else {
+      onSelectedItemsChange?.([...(selectedItems || []), id]);
+    }
+  }
   return (
     <section className="overflow-hidden rounded-sm border border-muted-foreground/20">
       <Table>
         <TableHeader>
           <TableRow className="pl-5">
+            <TableHead>
+              <Checkbox
+                checked={selectedItems?.length === data.length}
+                onCheckedChange={handleSelectAll}
+              />
+            </TableHead>
             <TableHead>N° do contrato</TableHead>
             <TableHead>Cidade</TableHead>
             <TableHead>
@@ -95,6 +126,12 @@ export function DataTable({ data, filters, onFilters }: DataTableProps) {
           {data.map((item) => (
             <TableRow key={item.id} className="px-4">
               <TableCell>
+                <Checkbox
+                  checked={selectedItems?.includes(item.id)}
+                  onCheckedChange={() => handleSelect(item.id)}
+                />
+              </TableCell>
+              <TableCell>
                 <div className="flex items-center justify-start gap-1">
                   <CopyBadge value={item.number.toLocaleString()} />
                   <span>{item.number}</span>
@@ -119,7 +156,7 @@ export function DataTable({ data, filters, onFilters }: DataTableProps) {
               </TableCell>
               <TableCell>{currency(item.price)}</TableCell>
               <TableCell className="flex justify-center items-center">
-                <Ellipsis />
+                <MenuOrder data={item} />
               </TableCell>
             </TableRow>
           ))}

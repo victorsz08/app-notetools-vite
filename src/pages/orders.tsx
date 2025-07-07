@@ -1,5 +1,6 @@
 import { type Status } from "@/@types";
 import { CreateOrderForm } from "@/components/forms/create-order-form";
+import { DeleteGroupOrders } from "@/components/forms/delete-group-orders";
 import { DataTable } from "@/components/table/data-table";
 import { NotFoundOrders } from "@/components/table/not-found-orders";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import { type DateRange } from "react-day-picker";
 
 export function OrdersPage() {
   const { getOrders } = useOrder();
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [schedulingDateFilter, setSchedulingDateFilter] = useState<
     DateRange | undefined
   >();
@@ -72,9 +74,12 @@ export function OrdersPage() {
         </small>
       </div>
       <Card>
-        <CardHeader className="flex items-center justify-end">
-          <CreateOrderForm />
-        </CardHeader>
+        {data && (
+          <CardHeader className="flex items-center justify-end">
+            <CreateOrderForm />
+            <DeleteGroupOrders groupId={selectedItems} />
+          </CardHeader>
+        )}
         <CardContent>
           {data ? (
             <DataTable
@@ -86,8 +91,10 @@ export function OrdersPage() {
                 createdDateFilter,
                 setSchedulingDateFilter,
                 status,
-                setStatus
+                setStatus,
               }}
+              selectedItems={selectedItems}
+              onSelectedItemsChange={setSelectedItems}
             />
           ) : (
             <NotFoundOrders />
@@ -101,10 +108,20 @@ export function OrdersPage() {
               </span>
 
               <div className="flex items-center gap-3">
-                <Button type="button" variant="secondary" onClick={() => setPage(1)} disabled={page === 1}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                >
                   <ChevronsLeft className="w-4 h-4" />
                 </Button>
-                <Button type="button" variant="secondary" disabled={page === 1} onClick={() => setPage(page - 1)}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <Button

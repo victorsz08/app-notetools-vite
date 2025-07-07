@@ -19,9 +19,37 @@ export interface GetOrdersInputDto {
   createdDateOut?: string;
   status?: Status;
 }
+
+interface UpdateSchedulingOrderInput {
+  id: string;
+  schedulingDate: string;
+  schedulingTime: string;
+}
+
+interface UpdateStatusOrderInput {
+  id: string;
+  status: Status;
+}
+
+interface DeleteOrderInput {
+  id: string;
+}
+
+interface UpdateInfoOrderInput {
+  id: string;
+  number: string;
+  local: string;
+  price: number;
+  contact: string;
+}
 interface UseOrderProps {
   getOrders: (input: GetOrdersInputDto) => Promise<GetOrdersOutput>;
   getNextOrders: () => Promise<GetOrdersOutput>;
+  deleteGroupOrders: (groupId?: string[]) => Promise<void>;
+  updateScheduling: (input: UpdateSchedulingOrderInput) => Promise<void>;
+  updateStatus: (input: UpdateStatusOrderInput) => Promise<void>;
+  deleteOrder: (input: DeleteOrderInput) => Promise<void>;
+  updateInfo: (input: UpdateInfoOrderInput) => Promise<void>;
 }
 
 const dateIn = moment().format("YYYY-MM-DD");
@@ -66,11 +94,65 @@ export function useOrder(): UseOrderProps {
       params.append("createdDateOut", createdDateOut);
     }
 
-    const response = await api.get<GetOrdersOutput>(`list-orders?${params.toString()}`);
+    const response = await api.get<GetOrdersOutput>(
+      `list-orders?${params.toString()}`
+    );
     return response.data;
   };
+
+  const deleteGroupOrders = async (groupId?: string[]) => {
+    if (groupId && groupId.length > 0) {
+      for (let i = 0; i < groupId.length; i++) {
+        await api.delete(`orders/${groupId[i]}`);
+      }
+
+      return;
+    }
+    return;
+  };
+
+  const updateScheduling = async (input: UpdateSchedulingOrderInput) => {
+    const { id, schedulingDate, schedulingTime } = input;
+    await api.put(`orders/update-scheduling/${id}`, {
+      schedulingDate,
+      schedulingTime,
+    });
+
+    return;
+  };
+
+  const updateStatus = async (input: UpdateStatusOrderInput) => {
+    const { id, status } = input;
+    await api.put(`orders/update-status/${id}`, {
+      status,
+    });
+    return;
+  };
+
+  const deleteOrder = async (input: DeleteOrderInput) => {
+    const { id } = input;
+    await api.delete(`orders/${id}`);
+    return;
+  };
+
+  const updateInfo = async (input: UpdateInfoOrderInput) => {
+    const { id, number, local, price, contact } = input;
+    await api.put(`orders/${id}`, {
+      number,
+      local,
+      price,
+      contact,
+    });
+    return;
+  };
+
   return {
     getOrders,
     getNextOrders,
+    deleteGroupOrders,
+    updateScheduling,
+    updateStatus,
+    deleteOrder,
+    updateInfo,
   };
 }
