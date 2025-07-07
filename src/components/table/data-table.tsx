@@ -76,8 +76,8 @@ export function DataTable({
                   onChange={filters?.setSchedulingDateFilter}
                 >
                   <div className="cursor-pointer gap-1 justify-start flex items-center hover:text-primary">
-                    <span>Data de agendamento</span>
-                    <Filter className="w-3 h-3" />
+                    <span className={`${filters?.schedulingDateFilter ? "text-primary" : ""}`}>Data de agendamento</span>
+                    <Filter className={`w-3 h-3 ${filters?.schedulingDateFilter ? "text-primary" : ""}`} />
                   </div>
                 </DateRangeFilter>
               ) : (
@@ -96,8 +96,8 @@ export function DataTable({
                     className={`cursor-pointer gap-1 justify-start flex 
                   items-center hover:text-primary`}
                   >
-                    <span>Criado</span>
-                    <Filter className="w-3 h-3" />
+                    <span className={`${filters?.createdDateFilter ? "text-primary" : ""}`}>Criado</span>
+                    <Filter className={`w-3 h-3 ${filters?.createdDateFilter ? "text-primary" : ""}`} />
                   </div>
                 </DateRangeFilter>
               ) : (
@@ -105,7 +105,7 @@ export function DataTable({
               )}
             </TableHead>
             <TableHead>
-              <StatusFilter
+              {filters?.status ? <StatusFilter
                 status={filters?.status}
                 onChange={filters?.setStatus}
               >
@@ -113,10 +113,10 @@ export function DataTable({
                   className={`cursor-pointer gap-1 justify-start flex 
                   items-center hover:text-primary`}
                 >
-                  <span>Status</span>
-                  <Filter className="w-3 h-3" />
+                  <span className={`${filters?.status ? "text-primary" : ""}`}>Status</span>
+                  <Filter className={`w-3 h-3 ${filters?.status ? "text-primary" : ""}`} />
                 </div>
-              </StatusFilter>
+              </StatusFilter> : "Status"}
             </TableHead>
             <TableHead>Valor</TableHead>
             <TableHead className="text-center">Ações</TableHead>

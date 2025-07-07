@@ -4,6 +4,7 @@ import { Dahsboard } from "@/pages/dashboard";
 import { LoginPage } from "@/pages/LoginPage";
 import { NotePage } from "@/pages/notes";
 import { OrdersPage } from "@/pages/orders";
+import { ProfilePage } from "@/pages/profile";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
@@ -28,6 +29,7 @@ export function RootRoutes() {
           <Route path="/" element={<Dahsboard />} />
           <Route path="/pedidos" element={<OrdersPage />} />
           <Route path="/anotacoes" element={<NotePage />} />
+          <Route path="/perfil" element={<ProfilePage/>} />
         </Route>
       </Route>
       <Route
