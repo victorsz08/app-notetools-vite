@@ -19,7 +19,7 @@ export function NextOrders() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const { data, isFetching } = useQuery({
-    queryKey: ["next-orders"],
+    queryKey: ["get-orders"],
     queryFn: getNextOrders,
     refetchOnWindowFocus: false,
   });

@@ -43,7 +43,7 @@ export function StatusFilter({
           value={statusCraft}
           onValueChange={(value: Status) => setStatusCraft(value)}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="--selecione um status--" />
           </SelectTrigger>
           <SelectContent>
@@ -58,7 +58,7 @@ export function StatusFilter({
             </SelectItem>
           </SelectContent>
         </Select>
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex mt-5 items-center justify-end gap-2">
           <Button
             type="button"
             variant="outline"

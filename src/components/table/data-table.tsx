@@ -113,7 +113,7 @@ export function DataTable({
                   className={`cursor-pointer gap-1 justify-start flex 
                   items-center hover:text-primary`}
                 >
-                  <span>Criado</span>
+                  <span>Status</span>
                   <Filter className="w-3 h-3" />
                 </div>
               </StatusFilter>
