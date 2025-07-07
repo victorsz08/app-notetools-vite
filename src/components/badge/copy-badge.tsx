@@ -1,5 +1,6 @@
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 interface CopyBadgeProps {
   value: string;
 }
@@ -13,9 +14,16 @@ export function CopyBadge({ value }: CopyBadgeProps) {
   }
 
   return (
-    <Copy
-      onClick={handleCopyValue}
-      className="h-4 w-4 text-muted-foreground/80 hover:text-muted-foreground cursor-pointer"
-    />
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Copy
+          onClick={handleCopyValue}
+          className="h-4 w-4 text-muted-foreground/80 hover:text-muted-foreground cursor-pointer"
+        />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Copiar</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }

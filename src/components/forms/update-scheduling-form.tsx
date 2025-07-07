@@ -19,6 +19,7 @@ import { SchedulingInput } from "../inputs/scheduling-input";
 import moment from "moment";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
+import { CalendarCog } from "lucide-react";
 
 const updateSchedulingSchema = z.object({
   schedulingDate: z.string().nonempty("Data de agendamento é obrigatória"),
@@ -67,10 +68,8 @@ export function UpdateSchedulingForm({ data }: { data: DataOrder }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        className="text-xs w-full p-1 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-        asChild
-      >
+      <DialogTrigger className="text-xs w-full flex items-center gap-1 p-2 cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
+        <CalendarCog className="w-3 h-3" />
         <span>Atualizar agendamento</span>
       </DialogTrigger>
       <DialogContent>

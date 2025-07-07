@@ -37,7 +37,7 @@ interface DeleteOrderInput {
 
 interface UpdateInfoOrderInput {
   id: string;
-  number: string;
+  number: number;
   local: string;
   price: number;
   contact: string;

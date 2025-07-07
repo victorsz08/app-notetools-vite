@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { BadgeStatus } from "../badge/badge-status";
+import { Settings } from "lucide-react";
 
 const udpateStatusSchema = z.object({
   status: z.string().nonempty("Selecione um status"),
@@ -75,10 +76,8 @@ export function UpdateStatusForm({ data }: { data: DataOrder }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        className="text-xs w-full p-1 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-        asChild
-      >
+      <DialogTrigger className="text-xs w-full flex items-center gap-1 p-2 cursor-pointer text-muted-foreground hover:text-foreground transition-colors">
+        <Settings className="w-3 h-3" />
         <span>Atualizar status</span>
       </DialogTrigger>
       <DialogContent>
@@ -93,15 +92,15 @@ export function UpdateStatusForm({ data }: { data: DataOrder }) {
             <FormField
               control={form.control}
               name="status"
-              render={() => (
+              render={({ field }) => (
                 <FormItem className="group relative">
                   <FormLabel className="absolute bg-card text-xs -translate-y-2 px-2 translate-x-1">
                     Status
                   </FormLabel>
-                  <Select>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full">
                       <FormControl>
-                        <SelectValue placeholder="--selecione um status--"/>
+                        <SelectValue placeholder="--selecione um status--" />
                       </FormControl>
                     </SelectTrigger>
                     <SelectContent>
