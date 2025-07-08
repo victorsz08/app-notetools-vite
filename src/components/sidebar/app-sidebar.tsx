@@ -82,7 +82,7 @@ export default function AppSidebar({
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <img
-              src="/src/assets/icon.svg"
+              src="/icon.svg"
               className="text-primary-foreground w-5"
             />
           </div>

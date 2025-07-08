@@ -54,7 +54,7 @@ export function LoginPage() {
   return (
     <section className="w-screen h-screen flex">
       <div className="w-full flex-col gap-4 bg-muted/60 flex items-center justify-center h-full">
-        <img src="/src/assets/icon.svg" alt="Logo" className="w-28" />
+        <img src="/icon.svg" alt="Logo" className="w-28" />
         <div className="text-center">
           <p className="text-2xl font-bold text-muted-foreground/90">
             Notetools Inc
