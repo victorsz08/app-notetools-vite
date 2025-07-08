@@ -8,7 +8,7 @@ import 'primereact/resources/primereact.min.css'; //core css
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/">
       <AuthContextProvider>
         <RootRoutes />
       </AuthContextProvider>
