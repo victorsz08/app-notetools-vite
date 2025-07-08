@@ -71,10 +71,7 @@ export function AuthContextProvider({
       router("/login");
     }
   };
-  if (isLoading) {
-    return null
-  }
-
+  
   const isAuthenticated: boolean = !!user;
 
   return (
