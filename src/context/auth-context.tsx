@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { UserData } from "../@types";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "../pages/loading";
 import { destroyCookie } from "nookies";
 
 export type AuthContextProps = {
@@ -73,7 +72,7 @@ export function AuthContextProvider({
     }
   };
   if (isLoading) {
-    return <Loading />;
+    return null
   }
 
   const isAuthenticated: boolean = !!user;
