@@ -71,13 +71,13 @@ export function NotePage() {
     mutationKey: ["delete-note"],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      setSelectedNote(undefined);
+      setSelectedNote(null);
       toast.success("Anotação excluida com sucesso!");
     },
   });
 
-  const [selectedNote, setSelectedNote] = useState<DataNote | undefined>(
-    undefined
+  const [selectedNote, setSelectedNote] = useState<DataNote | null>(
+    null
   );
 
   if (isPending) {
@@ -177,7 +177,7 @@ export function NotePage() {
               update();
             }}
             onTextChange={(e) => {
-              setSelectedNote({ ...selectedNote, content: e.htmlValue });
+              setSelectedNote({ ...selectedNote, content: e.htmlValue || "" });
             }}
           />
         </div>
