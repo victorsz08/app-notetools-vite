@@ -1,4 +1,5 @@
 import type { DataNote } from "@/@types";
+import { DialogNote } from "@/components/dialog/dialog-note";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNote } from "@/hooks/use-note";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Notebook } from "lucide-react";
+import { Expand, LoaderCircle, Notebook } from "lucide-react";
 import moment from "moment";
 import { Editor } from "primereact/editor";
 import { useState } from "react";
@@ -22,6 +23,7 @@ import { toast } from "sonner";
 
 export function NotePage() {
   const queryClient = useQueryClient();
+    const [visible, setVisible] = useState<boolean>(false);
   const { getNotes, newNote, updateNote, deleteNote } = useNote();
 
   const { data, isPending } = useQuery({
@@ -159,6 +161,10 @@ export function NotePage() {
                 onClick={() => remove()}
               >
                 {isRemovePending ? "Excluindo..." : "Excluir"}
+              </Button>
+              <Button variant="ghost" onClick={() => setVisible(true)}>
+                <Expand/>
+                <DialogNote visible={visible} setVisible={setVisible} data={selectedNote}/>
               </Button>
             </div>
           </div>
