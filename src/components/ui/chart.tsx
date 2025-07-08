@@ -122,7 +122,9 @@ function ChartTooltipContent({
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
-    labelKey?: string
+    labelKey?: string,
+    label?: string,
+    payload?: any
   }) {
   const { config } = useChart()
 
@@ -177,70 +179,82 @@ function ChartTooltipContent({
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload.map((item, index) => {
-          const key = `${nameKey || item.name || item.dataKey || "value"}`
-          const itemConfig = getPayloadConfigFromPayload(config, item, key)
-          const indicatorColor = color || item.payload.fill || item.color
+        {payload.map(
+          (
+            item: {
+              name?: string
+              dataKey?: string
+              value?: number | string
+              color?: string
+              payload?: { fill?: string }
+              [key: string]: any
+            },
+            index: number
+          ) => {
+            const key = `${nameKey || item.name || item.dataKey || "value"}`
+            const itemConfig = getPayloadConfigFromPayload(config, item, key)
+            const indicatorColor: string | undefined = color || item.payload?.fill || item.color
 
-          return (
-            <div
-              key={item.dataKey}
-              className={cn(
-                "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
-                indicator === "dot" && "items-center"
-              )}
-            >
-              {formatter && item?.value !== undefined && item.name ? (
-                formatter(item.value, item.name, item, index, item.payload)
+            return (
+              <div
+          key={item.dataKey}
+          className={cn(
+            "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
+            indicator === "dot" && "items-center"
+          )}
+              >
+          {formatter && item?.value !== undefined && item.name ? (
+            formatter(item.value, item.name, item, index, payload)
+          ) : (
+            <>
+              {itemConfig?.icon ? (
+                <itemConfig.icon />
               ) : (
-                <>
-                  {itemConfig?.icon ? (
-                    <itemConfig.icon />
-                  ) : (
-                    !hideIndicator && (
-                      <div
-                        className={cn(
-                          "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
-                          {
-                            "h-2.5 w-2.5": indicator === "dot",
-                            "w-1": indicator === "line",
-                            "w-0 border-[1.5px] border-dashed bg-transparent":
-                              indicator === "dashed",
-                            "my-0.5": nestLabel && indicator === "dashed",
-                          }
-                        )}
-                        style={
-                          {
-                            "--color-bg": indicatorColor,
-                            "--color-border": indicatorColor,
-                          } as React.CSSProperties
-                        }
-                      />
-                    )
-                  )}
-                  <div
-                    className={cn(
-                      "flex flex-1 justify-between leading-none",
-                      nestLabel ? "items-end" : "items-center"
-                    )}
-                  >
-                    <div className="grid gap-1.5">
-                      {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-foreground">
-                        {itemConfig?.label || item.name}
-                      </span>
-                    </div>
-                    {item.value && (
-                      <span className="text-foreground font-mono font-medium tabular-nums">
-                        {item.value.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                </>
+                !hideIndicator && (
+            <div
+              className={cn(
+                "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+                {
+                  "h-2.5 w-2.5": indicator === "dot",
+                  "w-1": indicator === "line",
+                  "w-0 border-[1.5px] border-dashed bg-transparent":
+              indicator === "dashed",
+                  "my-0.5": nestLabel && indicator === "dashed",
+                }
               )}
-            </div>
-          )
-        })}
+              style={
+                {
+                  "--color-bg": indicatorColor,
+                  "--color-border": indicatorColor,
+                } as React.CSSProperties
+              }
+            />
+                )
+              )}
+              <div
+                className={cn(
+            "flex flex-1 justify-between leading-none",
+            nestLabel ? "items-end" : "items-center"
+                )}
+              >
+                <div className="grid gap-1.5">
+            {nestLabel ? tooltipLabel : null}
+            <span className="text-muted-foreground">
+              {itemConfig?.label || item.name}
+            </span>
+                </div>
+                {item.value && (
+            <span className="text-foreground font-mono font-medium tabular-nums">
+              {item.value.toLocaleString()}
+            </span>
+                )}
+              </div>
+            </>
+          )}
+              </div>
+            )
+          }
+        )}
       </div>
     </div>
   )
@@ -248,17 +262,23 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend
 
-function ChartLegendContent({
-  className,
-  hideIcon = false,
-  payload,
-  verticalAlign = "bottom",
-  nameKey,
-}: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-    hideIcon?: boolean
-    nameKey?: string
-  }) {
+function ChartLegendContent(
+  props: React.ComponentProps<"div"> &
+    Partial<RechartsPrimitive.LegendProps> & {
+      hideIcon?: boolean
+      nameKey?: string
+      payload?: any[]
+    }
+) {
+  const {
+    className,
+    hideIcon = false,
+    payload,
+    verticalAlign = "bottom",
+    nameKey,
+    ...divProps
+  } = props
+
   const { config } = useChart()
 
   if (!payload?.length) {
@@ -272,6 +292,7 @@ function ChartLegendContent({
         verticalAlign === "top" ? "pb-3" : "pt-3",
         className
       )}
+      {...divProps}
     >
       {payload.map((item) => {
         const key = `${nameKey || item.dataKey || "value"}`

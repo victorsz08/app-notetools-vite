@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Camera, Upload, Link, Check, Trash } from 'lucide-react';
+import { Camera, Link, Check, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AvatarSelectorProps {
