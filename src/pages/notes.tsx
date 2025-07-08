@@ -177,7 +177,7 @@ export function NotePage() {
               update();
             }}
             onTextChange={(e) => {
-              setSelectedNote({ ...selectedNote, content: e.textValue });
+              setSelectedNote({ ...selectedNote, content: e.htmlValue });
             }}
           />
         </div>
