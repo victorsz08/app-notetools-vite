@@ -12,7 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Label } from "../ui/label";
-import { CheckCircle, LoaderCircle, MapPin, X } from "lucide-react";
+import { CheckCircle, LoaderCircle, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Street {
