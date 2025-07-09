@@ -20,10 +20,11 @@ import moment from "moment";
 import { Editor } from "primereact/editor";
 import { useState } from "react";
 import { toast } from "sonner";
+import { DeleteNoteAlert } from "@/components/forms/delete-note-alert";
 
 export function NotePage() {
   const queryClient = useQueryClient();
-  const { getNotes, newNote, updateNote, deleteNote } = useNote();
+  const { getNotes, newNote, updateNote } = useNote();
   const { open } = useNoteEditor();
   console.log(open);
 
@@ -62,20 +63,6 @@ export function NotePage() {
     mutationKey: ["update-note"],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-  });
-
-  const { mutate: remove, isPending: isRemovePending } = useMutation({
-    mutationFn: async () => {
-      if (selectedNote) {
-        await deleteNote(selectedNote.id);
-      }
-    },
-    mutationKey: ["delete-note"],
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      setSelectedNote(null);
-      toast.success("Anotação excluida com sucesso!");
     },
   });
 
@@ -156,13 +143,7 @@ export function NotePage() {
                   </span>
                 </div>
               )}
-              <Button
-                disabled={isRemovePending}
-                variant="destructive"
-                onClick={() => remove()}
-              >
-                {isRemovePending ? "Excluindo..." : "Excluir"}
-              </Button>
+              <DeleteNoteAlert id={selectedNote.id}/>
               <Button
                 variant="ghost"
                 onClick={() =>

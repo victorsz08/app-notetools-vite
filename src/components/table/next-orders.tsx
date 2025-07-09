@@ -26,23 +26,23 @@ export function NextOrders() {
 
   if (isFetching) return <Skeleton className="bg-muted w-full h-42" />;
 
+  if(!data || data?.orders.length === 0) {
+      return <NotFoundOrders/>
+  }
+
   return (
     <Card className="w-full gap-10">
       <CardHeader className="flex items-center justify-between">
-        {data && data.orders.length > 0 && (
           <div>
             <CardTitle>Próximos pedidos</CardTitle>
             <CardDescription className="text-xs">
               Pedidos com agendamentos pendentes
             </CardDescription>
           </div>
-        )}
-        {data && data.orders.length > 0 && (
           <div className="flex items-center gap-2">
             <DeleteGroupOrders groupId={selectedItems} />
             <CreateOrderForm />
           </div>
-        )}
       </CardHeader>
       <CardContent>
         {data && data.orders.length > 0 ? (

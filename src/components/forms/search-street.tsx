@@ -12,7 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Label } from "../ui/label";
-import { CheckCircle, MapPin, X } from "lucide-react";
+import { CheckCircle, LoaderCircle, MapPin, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Street {
@@ -32,6 +32,7 @@ type SearchStreetForm = z.infer<typeof searchStreet>;
 
 export function SearchStreet() {
   const [address, setAddress] = useState<Street | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<SearchStreetForm>({
     resolver: zodResolver(searchStreet),
     defaultValues: {
@@ -47,6 +48,7 @@ export function SearchStreet() {
     return numbers.slice(0, 8).replace(/(\d{5})(\d{3})/, "$1-$2");
   };
   async function onSubmit(values: SearchStreetForm) {
+    setIsLoading(true)
     try {
       const cepFormatted =
         values.cep.length === 7 ? `0${values.cep}` : values.cep;
@@ -55,19 +57,19 @@ export function SearchStreet() {
       );
       const data = await response.json();
       setAddress(data);
+      form.setValue("cep", "")
     } catch (error) {
       form.setError("cep", {
         message: "Cep incorreto",
       });
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <Card className="w-full gap-7 h-[260px]">
       <CardHeader className="flex mb-14 items-center justify-start gap-2">
-        <span className="bg-primary/20 w-fit p-2 rounded-sm text-primary">
-          <MapPin className="w-5 h-5" />
-        </span>
         <div>
           <CardTitle>Buscar endereço</CardTitle>
           <CardDescription className="text-xs">
@@ -77,7 +79,7 @@ export function SearchStreet() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-between">
             <div className="relative w-fit">
               <FormField
                 control={form.control}
@@ -87,7 +89,8 @@ export function SearchStreet() {
                     <FormLabel className="bg-card px-1 absolute -translate-y-2 translate-x-2">
                       Digite o cep
                     </FormLabel>
-                    <Input
+                    <div className="flex items-center gap-2">
+                      <Input
                       value={field.value}
                       onChange={(e) => {
                         setAddress(null);
@@ -96,6 +99,8 @@ export function SearchStreet() {
                       className="w-[350px] h-14 placeholder:text-muted-foreground/50"
                       placeholder="00000-000"
                     />
+                    {isLoading && <LoaderCircle className="w-6 h-6 text-primary animate-spin repeat-infinite"/>}
+                    </div>
                     <FormMessage />
                     {address && (
                       <motion.section

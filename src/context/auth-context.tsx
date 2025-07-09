@@ -21,7 +21,6 @@ interface LoginCredentials {
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
-
 export function AuthContextProvider({
   children,
 }: {

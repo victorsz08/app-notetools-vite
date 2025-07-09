@@ -25,7 +25,7 @@ export function AvatarMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="w-8 h-8 cursor-pointer">
+        <Avatar className="w-9 h-9 cursor-pointer border-4 border-primary">
           <AvatarImage src={user?.avatarUrl} alt={user?.username} />
           <AvatarFallback>
             {getInitials(user?.firstName, user?.lastName)}
