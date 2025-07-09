@@ -13,6 +13,12 @@ export interface InsightStatus {
   cancelled: number;
 }
 
+export interface InsightTrending {
+  sales: { previous: number; last: number; trend: number };
+  revenue: { previous: number; last: number; trend: number };
+  completionRate: { previous: number; last: number; trend: number };
+}
+
 export interface InsightPerDay {
   sales: {
     day: string;
@@ -24,6 +30,7 @@ interface UseInsightProps {
   getInsight: () => Promise<InsightsData>;
   getInsightStatus: () => Promise<InsightStatus>;
   getInsightPerDay: () => Promise<InsightPerDay>;
+  getInsightTrending: () => Promise<InsightTrending>;
 }
 
 const dateIn = moment().startOf("month").format("YYYY-MM-DD");
@@ -48,8 +55,11 @@ export function useInsight(): UseInsightProps {
     const response = await api.get<InsightPerDay>(
       `insights/per-day?dateIn=${dateIn}&dateOut=${dateOut}`
     );
+    return response.data;
+  };
 
-    console.log(response.data);
+  const getInsightTrending = async () => {
+    const response = await api.get<InsightTrending>(`insights/trending`);
     return response.data;
   };
 
@@ -57,5 +67,6 @@ export function useInsight(): UseInsightProps {
     getInsight,
     getInsightStatus,
     getInsightPerDay,
+    getInsightTrending,
   };
 }

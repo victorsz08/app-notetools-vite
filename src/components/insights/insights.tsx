@@ -4,9 +4,12 @@ import { currency, percent } from "@/lib/utils";
 import { HandCoins, Handshake, Percent } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { useInsight } from "@/hooks/use-insight";
+import { Badge } from "../ui/badge";
+import { BadgeTrending } from "../badge/badge-trending";
 
 export function Insights() {
-  const { getInsight } = useInsight();
+  const { getInsight, getInsightTrending } = useInsight();
+
   const { data, isPending } = useQuery({
     queryFn: getInsight,
     queryKey: ["insights"],
@@ -14,6 +17,16 @@ export function Insights() {
       revenue: 0,
       sales: 0,
       completionRate: 0,
+    },
+  });
+
+  const { data: trending, isPending: isPendingTrending } = useQuery({
+    queryFn: getInsightTrending,
+    queryKey: ["insights-trending"],
+    initialData: {
+      sales: { previous: 0, last: 0, trend: 0 },
+      revenue: { previous: 0, last: 0, trend: 0 },
+      completionRate: { previous: 0, last: 0, trend: 0 },
     },
   });
 
@@ -36,10 +49,13 @@ export function Insights() {
             <HandCoins className="w-4 h-4" />
           </span>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
             {currency(data?.revenue)}
           </h1>
+          <BadgeTrending variant={trending.revenue.trend > 0 ? "up" : "down"}>
+            {percent(trending.revenue.trend)}
+          </BadgeTrending>
         </CardContent>
       </Card>
       <Card className="w-full">
@@ -53,6 +69,9 @@ export function Insights() {
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
             {data?.sales}
           </h1>
+          <BadgeTrending variant={trending.sales.trend > 0 ? "up" : "down"}>
+            {percent(trending.sales.trend)}
+          </BadgeTrending>
         </CardContent>
       </Card>
       <Card className="w-full">
@@ -66,6 +85,11 @@ export function Insights() {
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
             {percent(data?.completionRate)}
           </h1>
+          <BadgeTrending
+            variant={trending.completionRate.trend > 0 ? "up" : "down"}
+          >
+            {percent(trending.completionRate.trend)}
+          </BadgeTrending>
         </CardContent>
       </Card>
     </section>
