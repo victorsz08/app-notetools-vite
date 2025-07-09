@@ -107,7 +107,10 @@ export function CreateOrderForm() {
           <span className="pr-2">Novo pedido</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[40vw]">
+      <DialogContent
+        className="w-[40vw]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader className="mb-6">
           <DialogTitle>Novo pedido</DialogTitle>
           <DialogDescription>Preencha todas as informações</DialogDescription>
