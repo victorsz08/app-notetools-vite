@@ -4,7 +4,6 @@ import { currency, percent } from "@/lib/utils";
 import { HandCoins, Handshake, Percent } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { useInsight } from "@/hooks/use-insight";
-import { Badge } from "../ui/badge";
 import { BadgeTrending } from "../badge/badge-trending";
 
 export function Insights() {
@@ -20,7 +19,7 @@ export function Insights() {
     },
   });
 
-  const { data: trending, isPending: isPendingTrending } = useQuery({
+  const { data: trending } = useQuery({
     queryFn: getInsightTrending,
     queryKey: ["insights-trending"],
     initialData: {
