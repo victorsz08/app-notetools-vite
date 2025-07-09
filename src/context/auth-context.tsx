@@ -3,6 +3,7 @@ import type { UserData } from "../@types";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { destroyCookie } from "nookies";
+import { Loading } from "@/pages/loading";
 
 export type AuthContextProps = {
   user?: UserData | null;
@@ -71,7 +72,11 @@ export function AuthContextProvider({
       router("/login");
     }
   };
-  
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   const isAuthenticated: boolean = !!user;
 
   return (

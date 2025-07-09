@@ -111,7 +111,7 @@ export function LoginPage() {
           </form>
         </Form>
         <div className="flex flex-col justify-center items-center gap-2">
-          <img src="/src/assets/icon.svg" className="w-5" />
+          <img src="/icon.svg" className="w-5" />
           <small className="text-sm font-medium text-muted-foreground/80">
             Notetools
           </small>
