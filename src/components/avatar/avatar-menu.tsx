@@ -8,6 +8,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { LogOut, UserRound } from "lucide-react";
 import { Separator } from "../ui/separator";
+import { Link } from "react-router-dom";
 
 export function AvatarMenu() {
   const { user, logout } = useAuth();
@@ -42,14 +43,17 @@ export function AvatarMenu() {
         </DropdownMenuItem>
         <Separator />
         <DropdownMenuItem className="text-muted-foreground">
-          <a href="/perfil" className="flex justify-start items-center gap-1">
+          <Link to="/perfil" className="flex justify-start items-center gap-1">
             <UserRound className="w-2 h-2" />
             <span>Perfil</span>
-          </a>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => logout()} className="text-destructive hover:text-destructive flex justify-start items-center gap-1">
-            <LogOut className="w-2 h-2 text-destructive" />
-            <span>Sair</span>
+        <DropdownMenuItem
+          onClick={() => logout()}
+          className="text-destructive hover:text-destructive flex justify-start items-center gap-1"
+        >
+          <LogOut className="w-2 h-2 text-destructive" />
+          <span>Sair</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

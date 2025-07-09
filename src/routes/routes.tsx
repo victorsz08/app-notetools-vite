@@ -24,12 +24,12 @@ export function RootRoutes() {
 
   return (
     <Routes>
-      <Route element={<PrivateRoutes />}>
-        <Route element={<Layout />}>
+      <Route element={<Layout />}>
+        <Route element={<PrivateRoutes />}>
           <Route path="/" element={<Dahsboard />} />
           <Route path="/pedidos" element={<OrdersPage />} />
           <Route path="/anotacoes" element={<NotePage />} />
-          <Route path="/perfil" element={<ProfilePage/>} />
+          <Route path="/perfil" element={<ProfilePage />} />
         </Route>
       </Route>
       <Route

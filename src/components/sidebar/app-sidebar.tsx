@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { NavMenu } from "./nav-main";
 import { NavLink } from "./nav-link";
 import { useAuth } from "@/context/auth-context";
+import { Link } from "react-router-dom";
 
 const items = [
   {
@@ -81,10 +82,7 @@ export default function AppSidebar({
       <SidebarHeader className="py-6">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <img
-              src="/icon.svg"
-              className="text-primary-foreground w-5"
-            />
+            <img src="/icon.svg" className="text-primary-foreground w-5" />
           </div>
           <div className="group-data-[collapsible=icon]:hidden ease-[cubic-bezier(0.25,0.1,0.25,1)]">
             <h1 className="text-lg font-semibold text-muted-foreground/90 tracking-tight">
@@ -135,13 +133,13 @@ export default function AppSidebar({
                 sideOffset={4}
               >
                 <DropdownMenuItem>
-                  <a
-                    href="/perfil"
+                  <Link
+                    to="/perfil"
                     className="cursor-pointer flex items-center gap-1 w-full"
                   >
                     <User className="mr-1 h-4 w-4" />
                     Perfil
-                  </a>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={logout}

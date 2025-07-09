@@ -1,67 +1,35 @@
-import { DataNote } from "@/@types";
-import { useNote } from "@/hooks/use-note";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dialog } from "primereact/dialog";
 import { Editor } from "primereact/editor";
-import { useState } from "react";
+import { useNoteEditor } from "@/hooks/use-note-dialog";
+import { useNote } from "@/hooks/use-note";
+import { useMutation } from "@tanstack/react-query";
+import { Dialog } from "primereact/dialog";
 
-export function DialogNote({
-  data,
-  visible,
-  setVisible,
-}: {
-  data: DataNote | null;
-  visible: boolean;
-  setVisible: (value: boolean) => void;
-}) {
-  const [noteCraft, setNoteCraft] = useState<DataNote | null>(data);
+export function NoteEditorDialog() {
+  const { isOpen, id, title, content, close, setContent } = useNoteEditor();
 
   const { updateNote } = useNote();
-  const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: async () => {
-      if (noteCraft) {
-        await updateNote({
-          id: noteCraft.id,
-          title: noteCraft.title,
-          content: noteCraft.content,
-        });
-      }
+      await updateNote({
+        id: id,
+        content,
+        title,
+      });
+
+      return;
     },
-    mutationKey: ["update-note"],
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-notes"] });
-    },
+    mutationKey: ["updateNote"],
   });
 
   return (
-    <Dialog
-      visible={visible}
-      onHide={() => {
-        if (!visible) return;
-        setVisible(false);
-      }}
-      modal={false}
-    >
+    <Dialog visible={isOpen} onHide={() => close()} modal={false}>
       <Editor
+        value={content}
+        onTextChange={(e) => setContent(e.htmlValue || "")}
+        style={{ height: "90%", fontFamily: "Poppins" }}
         spellCheck={false}
-        style={{
-          fontFamily: "Poppins",
-          backgroundColor: "var(--color-card)",
-          height: "60vh",
-        }}
-        className="w-full font-poppins"
-        value={noteCraft?.content}
-        key={noteCraft?.id}
-        onBlur={() => {
-          mutate();
-        }}
-        onTextChange={(e) => {
-          if (noteCraft) {
-            setNoteCraft({ ...noteCraft, content: e.htmlValue || "" });
-          }
-        }}
+        onBlur={() => mutate()}
       />
     </Dialog>
   );

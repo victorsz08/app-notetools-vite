@@ -1,5 +1,5 @@
 import type { DataNote } from "@/@types";
-import { DialogNote } from "@/components/dialog/dialog-note";
+import { useNoteEditor } from "@/hooks/use-note-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,8 +23,9 @@ import { toast } from "sonner";
 
 export function NotePage() {
   const queryClient = useQueryClient();
-    const [visible, setVisible] = useState<boolean>(false);
   const { getNotes, newNote, updateNote, deleteNote } = useNote();
+  const { open } = useNoteEditor();
+  console.log(open);
 
   const { data, isPending } = useQuery({
     queryKey: ["notes"],
@@ -44,7 +45,7 @@ export function NotePage() {
     mutationKey: ["create-note"],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      toast.success("Anotação criada!")
+      toast.success("Anotação criada!");
     },
   });
 
@@ -78,9 +79,7 @@ export function NotePage() {
     },
   });
 
-  const [selectedNote, setSelectedNote] = useState<DataNote | null>(
-    null
-  );
+  const [selectedNote, setSelectedNote] = useState<DataNote | null>(null);
 
   if (isPending) {
     return <Skeleton className="w-full h-full bg-muted" />;
@@ -136,24 +135,26 @@ export function NotePage() {
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-1 mb-5">
               <Label className="text-xs text-muted-foreground/60">Título</Label>
-                <input
-                  className="w-full p-0 text-base font-semibold tracking-tight text-muted-foreground bg-transparent"
-                  key={selectedNote.id}
-                  value={selectedNote.title}
-                  onChange={(e) => {
-                    setSelectedNote({ ...selectedNote, title: e.target.value });
-                  }}
-                  onBlur={() => {
-                    update();
-                  }}
-                />
+              <input
+                className="w-full p-0 text-base font-semibold tracking-tight text-muted-foreground bg-transparent"
+                key={selectedNote.id}
+                value={selectedNote.title}
+                onChange={(e) => {
+                  setSelectedNote({ ...selectedNote, title: e.target.value });
+                }}
+                onBlur={() => {
+                  update();
+                }}
+              />
             </div>
             <div className="flex items-center gap-3 justify-end">
               {updateIsPending && (
                 <div className="flex items-center gap-1">
-                    <LoaderCircle className="w-3 h-3 animate-spin repeat-infinite text-muted-foreground/80" />
-                    <span className="text-xs font-light text-muted-foreground/80">Salvando...</span>
-                  </div>
+                  <LoaderCircle className="w-3 h-3 animate-spin repeat-infinite text-muted-foreground/80" />
+                  <span className="text-xs font-light text-muted-foreground/80">
+                    Salvando...
+                  </span>
+                </div>
               )}
               <Button
                 disabled={isRemovePending}
@@ -162,9 +163,17 @@ export function NotePage() {
               >
                 {isRemovePending ? "Excluindo..." : "Excluir"}
               </Button>
-              <Button variant="ghost" onClick={() => setVisible(true)}>
-                <Expand/>
-                <DialogNote visible={visible} setVisible={setVisible} data={selectedNote}/>
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  open(
+                    selectedNote.title,
+                    selectedNote.content,
+                    selectedNote.id
+                  )
+                }
+              >
+                <Expand />
               </Button>
             </div>
           </div>
