@@ -2,6 +2,7 @@ import { BarChartSales } from "@/components/charts/bar-chart";
 import { ChartPieDonut } from "@/components/charts/donut-chart";
 import { SearchStreet } from "@/components/forms/search-street";
 import { Insights } from "@/components/insights/insights";
+import { RecentNotes } from "@/components/notes/recent-notes";
 import { NextOrders } from "@/components/table/next-orders";
 
 export function Dahsboard() {
@@ -16,7 +17,14 @@ export function Dahsboard() {
         </small>
       </div>
       <Insights />
-      <SearchStreet />
+      <section className="flex gap-4 h-fit items-start">
+        <div className="flex-2">
+          <SearchStreet />
+        </div>
+        <div className="flex-1">
+          <RecentNotes />
+        </div>
+      </section>
       <section className="flex space-x-4 w-full">
         <ChartPieDonut />
         <BarChartSales />
