@@ -32,7 +32,7 @@ export function NavMenu({ items }: NavMenuType) {
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
-                className="transition-colors text-sidebar-accent-foreground/80 text-xs duration-200 
+                className="transition-colors text-sidebar-accent-foreground/60 text-xs duration-200 
                     hover:bg-sidebar-accent hover:text-sidebar-accent-foreground/70"
               >
                 <Link

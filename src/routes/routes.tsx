@@ -1,17 +1,21 @@
 import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/context/auth-context";
 import { Dahsboard } from "@/pages/dashboard";
+import { Loading } from "@/pages/loading";
 import { LoginPage } from "@/pages/LoginPage";
 import { NotePage } from "@/pages/notes";
 import { OrdersPage } from "@/pages/orders";
 import { ProfilePage } from "@/pages/profile";
+import { useEffect } from "react";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
+
   if (isLoading) {
-    return null;
+    return <Loading />;
   }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -20,7 +24,16 @@ const PrivateRoutes = () => {
 };
 
 export function RootRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, session, isLoading } = useAuth();
+
+  useEffect(() => {
+    session();
+    // eslint-disable-next-line
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <Routes>
