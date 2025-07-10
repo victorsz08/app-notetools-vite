@@ -12,12 +12,12 @@ export function Dahsboard() {
   return (
     <section className="w-full h-fit p-4 space-y-6">
       <div className="flex flex-col">
-        <h1 className="text-xl font-semibold text-muted-foreground">
-          Dashboard
-        </h1>
         <small className="text-xs text-light text-muted-foreground/80">
-          Olá, seja bem-vindo {user?.firstName} {user?.lastName}
+          Bem-vindo!
         </small>
+        <h1 className="text-2xl font-semibold text-muted-foreground">
+          Olá, {user?.firstName} {user?.lastName}
+        </h1>
       </div>
       <Insights />
       <section className="flex gap-4 h-fit items-start">

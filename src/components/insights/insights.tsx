@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { currency, percent } from "@/lib/utils";
 import { HandCoins, Handshake, Percent } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
@@ -30,42 +35,42 @@ export function Insights() {
 
   return (
     <section className="flex space-x-4">
-      <Card className="w-full">
+      <Card className="w-full gap-3">
         <CardHeader className="flex items-center justify-between">
-          <CardDescription>Faturamento</CardDescription>
-          <span className="p-2 rounded-sm bg-blue-300 text-blue-700 w-fit">
+          <CardTitle className="text-sm font-normal">Faturamento</CardTitle>
+          <span className="p-2 rounded-sm bg-blue-200 text-blue-700 w-fit">
             <HandCoins className="w-4 h-4" />
           </span>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
-            {currency(data?.revenue)}
+            {currency(data.revenue)}
           </h1>
         </CardContent>
       </Card>
-      <Card className="w-full">
+      <Card className="w-full gap-3">
         <CardHeader className="flex items-center justify-between">
-          <CardDescription>Vendas</CardDescription>
-          <span className="p-2 rounded-sm bg-orange-300 text-orange-700 w-fit">
+          <CardTitle className="text-sm font-normal">Vendas</CardTitle>
+          <span className="p-2 rounded-sm bg-primary/40 text-primary w-fit">
             <Handshake className="w-4 h-4" />
           </span>
         </CardHeader>
         <CardContent>
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
-            {data?.sales}
+            {data.sales}
           </h1>
         </CardContent>
       </Card>
-      <Card className="w-full">
+      <Card className="w-full gap-3">
         <CardHeader className="flex items-center justify-between">
-          <CardDescription>Percentual de instalação</CardDescription>
-          <span className="p-2 rounded-sm bg-green-300 text-green-700 w-fit">
+          <CardTitle className="text-sm font-normal">Percentual de instalação</CardTitle>
+          <span className="p-2 rounded-sm bg-green-200 text-green-700 w-fit">
             <Percent className="w-4 h-4" />
           </span>
         </CardHeader>
         <CardContent>
           <h1 className="text-2xl font-semibold font-inter text-muted-foreground">
-            {percent(data?.completionRate)}
+            {percent(data.completionRate)}
           </h1>
         </CardContent>
       </Card>

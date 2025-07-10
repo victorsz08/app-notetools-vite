@@ -57,7 +57,7 @@ export function Layout() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <AvatarMenu />
+            <AvatarMenu />
         </header>
         <Outlet />
       </main>

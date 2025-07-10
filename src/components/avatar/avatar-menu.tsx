@@ -33,17 +33,20 @@ export function AvatarMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[240px]">
-        <DropdownMenuItem className="flex flex-col justify-start items-start gap-0 hover:bg-transparent">
-          <span className="font-semibold text-muted-foreground">
-            {user?.firstName} {user?.lastName}
-          </span>
-          <span className="text-xs text-muted-foreground/70">
-            {user?.username}
-          </span>
-        </DropdownMenuItem>
+          <div className="flex items-start flex-col gap-0 hover:bg-transparent p-2 text-xs">
+            <span className="font-semibold text-muted-foreground">
+              {user?.firstName} {user?.lastName}
+            </span>
+            <span className="text-xs text-muted-foreground/70">
+              {user?.username}
+            </span>
+          </div>
         <Separator />
-        <DropdownMenuItem className="text-muted-foreground">
-          <Link to="/perfil" className="flex justify-start items-center gap-1">
+        <DropdownMenuItem asChild>
+          <Link
+            to="/perfil"
+            className="flex text-muted-foreground justify-start items-center gap-1"
+          >
             <UserRound className="w-2 h-2" />
             <span>Perfil</span>
           </Link>
