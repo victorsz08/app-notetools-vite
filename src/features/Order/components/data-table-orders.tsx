@@ -8,7 +8,7 @@ import { CreateOrderForm } from "@/components/forms/create-order-form";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BadgeFilters } from "@/components/badge/badge-filters";
-import { Calendar, CircleDollarSign } from "lucide-react";
+import { Calendar,  Tag, XCircle } from "lucide-react";
 import { NotFoundOrders } from "@/components/table/not-found-orders";
 
 export function DataTableOrders() {
@@ -47,8 +47,8 @@ export function DataTableOrders() {
       status,
     ],
     refetchOnWindowFocus: false,
-    staleTime: 30000, // 30 segundos
-    gcTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 30000,
+    gcTime: 5 * 60 * 1000, 
   });
 
   // Loading state
@@ -109,6 +109,7 @@ export function DataTableOrders() {
                 <span>Agendamento: </span>
                 {schedulingDateFilter.from?.toLocaleDateString()} -{" "}
                 {schedulingDateFilter.to?.toLocaleDateString()}
+                <XCircle className="w-3 h-3 cursor-pointer" onClick={() => setSchedulingDateFilter(undefined)}/>
               </BadgeFilters>
             )}
             {createdDateFilter && (
@@ -117,13 +118,15 @@ export function DataTableOrders() {
                 <span>Criação: </span>
                 {createdDateFilter.from?.toLocaleDateString()} -{" "}
                 {createdDateFilter.to?.toLocaleDateString()}
+                <XCircle className="w-3 h-3 cursor-pointer" onClick={() => setCreatedDateFilter(undefined)}/>
               </BadgeFilters>
             )}
             {status && (
               <BadgeFilters>
-                <CircleDollarSign className="w-3 h-3 text-muted-foreground/80" />
+                <Tag className="w-3 h-3 text-muted-foreground/80" />
                 <span>Status: </span>
                 {status.toLowerCase()}
+                <XCircle className="w-3 h-3 cursor-pointer" onClick={() => setStatus(undefined)}/>
               </BadgeFilters>
             )}
           </div>
