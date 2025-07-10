@@ -10,6 +10,7 @@ import {
     SidebarMenuItem,
 } from '../ui/sidebar';
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 type NavMenuType = {
   items: {
@@ -20,6 +21,8 @@ type NavMenuType = {
 };
 
 export function NavMenu({ items }: NavMenuType) {
+  const location = useLocation();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="text-muted-foreground">
@@ -31,9 +34,10 @@ export function NavMenu({ items }: NavMenuType) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 asChild
+                isActive={location.pathname === item.href}
                 tooltip={item.title}
                 className="transition-colors text-sidebar-accent-foreground/60 text-xs duration-200 
-                    hover:bg-sidebar-accent hover:text-sidebar-accent-foreground/70"
+                    hover:bg-sidebar-accent hover:text-sidebar-accent-foreground/70 data-[active=true]:bg-primary data-[active=true]:text-muted"
               >
                 <Link
                   to={item.href}

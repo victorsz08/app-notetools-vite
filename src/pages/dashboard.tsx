@@ -4,8 +4,11 @@ import { SearchStreet } from "@/components/forms/search-street";
 import { Insights } from "@/components/insights/insights";
 import { RecentNotes } from "@/components/notes/recent-notes";
 import { NextOrders } from "@/components/table/next-orders";
+import { useAuth } from "@/context/auth-context";
 
 export function Dahsboard() {
+  const { user } = useAuth();
+
   return (
     <section className="w-full h-fit p-4 space-y-6">
       <div className="flex flex-col">
@@ -13,7 +16,7 @@ export function Dahsboard() {
           Dashboard
         </h1>
         <small className="text-xs text-light text-muted-foreground/80">
-          Gerencie todas suas metricas.
+          Olá, seja bem-vindo {user?.firstName} {user?.lastName}
         </small>
       </div>
       <Insights />

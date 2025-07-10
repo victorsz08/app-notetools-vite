@@ -1,4 +1,5 @@
 import { type Status } from "@/@types";
+import { BadgeFilters } from "@/components/badge/badge-filters";
 import { CreateOrderForm } from "@/components/forms/create-order-form";
 import { DeleteGroupOrders } from "@/components/forms/delete-group-orders";
 import { DataTable } from "@/components/table/data-table";
@@ -14,10 +15,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useOrder } from "@/hooks/user-order";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Calendar,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  CircleDollarSign,
 } from "lucide-react";
 import { useState } from "react";
 import { type DateRange } from "react-day-picker";
@@ -81,6 +84,31 @@ export function OrdersPage() {
           </CardHeader>
         )}
         <CardContent>
+          <div className="flex items-center gap-2 mb-2">
+            {schedulingDateFilter && (
+              <BadgeFilters>
+                <Calendar className="w-3 h-3 text-muted-foreground/80" />
+                <span>Filtro de data de agendamento: </span>
+                {schedulingDateFilter.from?.toLocaleDateString()} -{" "}
+                {schedulingDateFilter.to?.toLocaleDateString()}
+              </BadgeFilters>
+            )}
+            {createdDateFilter && (
+              <BadgeFilters>
+                <Calendar className="w-3 h-3 text-muted-foreground/80" />
+                <span>Filtro de data de criação: </span>
+                {createdDateFilter.from?.toLocaleDateString()} -{" "}
+                {createdDateFilter.to?.toLocaleDateString()}
+              </BadgeFilters>
+            )}
+            {status && (
+              <BadgeFilters>
+                <CircleDollarSign className="w-3 h-3 text-muted-foreground/80" />
+                <span>Filtro de status: </span>
+                {status.toLocaleLowerCase()}
+              </BadgeFilters>
+            )}
+          </div>
           {data ? (
             <DataTable
               data={data.orders}
