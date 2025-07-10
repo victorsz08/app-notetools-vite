@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/context/auth-context";
-import { Dahsboard } from "@/pages/dashboard";
+import { Dahsboard } from "@/pages/Dashboard";
 import { Loading } from "@/pages/loading";
-import { LoginPage } from "@/pages/LoginPage";
-import { NotePage } from "@/pages/notes";
-import { OrdersPage } from "@/pages/orders";
-import { ProfilePage } from "@/pages/profile";
+import { LoginPage } from "@/pages/Login";
+import { NotePage } from "@/pages/Notes";
+import { OrdersPage } from "@/pages/Orders";
+import { ProfilePage } from "@/pages/Profile";
 import { useEffect } from "react";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 
