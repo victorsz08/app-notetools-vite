@@ -6,7 +6,6 @@ import { LoginPage } from "@/pages/Login";
 import { NotePage } from "@/pages/Notes";
 import { OrdersPage } from "@/pages/Orders";
 import { ProfilePage } from "@/pages/Profile";
-import { useEffect } from "react";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoutes = () => {
@@ -24,12 +23,7 @@ const PrivateRoutes = () => {
 };
 
 export function RootRoutes() {
-  const { isAuthenticated, session, isLoading } = useAuth();
-
-  useEffect(() => {
-    session();
-    // eslint-disable-next-line
-  }, []);
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return <Loading />;

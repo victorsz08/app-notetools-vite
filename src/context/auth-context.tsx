@@ -1,75 +1,123 @@
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import { UserData } from "@/@types";
 import api from "@/lib/api";
-import { create } from "zustand";
 
 interface Credentials {
   username: string;
   password: string;
 }
 
-interface AuthState {
+interface AuthContextProps {
   user: UserData | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: Credentials) => Promise<void>;
   logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
   session: () => Promise<UserData | null>;
+  refreshToken: () => Promise<void>;
   setUser: (user: UserData | null) => void;
 }
 
-export const useAuth = create<AuthState>((set, get) => ({
-  user: null,
-  isAuthenticated: false,
-  isLoading: true,
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  login: async (credentials) => {
-    set({ isLoading: true });
-    try {
-      await api.post("auth/login", credentials);
-      const user = await get().session();
-      set({ user, isAuthenticated: true });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  logout: async () => {
-    await api.post("auth/logout");
-    set({ user: null, isAuthenticated: false });
-    window.location.href = "/login";
-  },
-
-  refreshToken: async () => {
+  const refreshToken = useCallback(async () => {
     await api.post("auth/refresh");
-  },
+  }, []);
 
-  session: async () => {
+  const session = useCallback(async (): Promise<UserData | null> => {
+    setIsLoading(true);
     try {
       const response = await api.get("auth/session");
       const userResponse = await api.get(`users/${response.data.id}`);
-      set({ user: userResponse.data, isAuthenticated: true });
+      setUser(userResponse.data);
+      setIsAuthenticated(true);
       return userResponse.data;
     } catch (error: any) {
       if (error?.response?.status === 401) {
         try {
-          await get().refreshToken();
+          await refreshToken();
           const response = await api.get("auth/session");
           const userResponse = await api.get(`users/${response.data.id}`);
-          set({ user: userResponse.data, isAuthenticated: true });
+          setUser(userResponse.data);
+          setIsAuthenticated(true);
           return userResponse.data;
         } catch (refreshError: any) {
           if (refreshError?.response?.status === 401) {
-            await get().logout();
+            await logout();
           }
         }
       }
-      set({ user: null, isAuthenticated: false });
+      setUser(null);
+      setIsAuthenticated(false);
+      window.location.href = "/login";
       return null;
     } finally {
-      set({ isLoading: false });
+      setIsLoading(false);
     }
-  },
-}));
+  }, [refreshToken]);
+
+  const login = useCallback(
+    async (credentials: Credentials) => {
+      setIsLoading(true);
+      try {
+        await api.post("auth/login", credentials);
+        const user = await session();
+        setUser(user);
+        setIsAuthenticated(true);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [session]
+  );
+
+  const logout = useCallback(async () => {
+    await api.post("auth/logout");
+    setUser(null);
+    setIsAuthenticated(false);
+    window.location.href = "/login";
+  }, []);
+
+  useEffect(() => {
+    session();
+    // eslint-disable-next-line
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        session,
+        refreshToken,
+        setUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth deve ser usado dentro de AuthProvider");
+  }
+  return context;
+}
